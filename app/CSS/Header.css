@@ -1,0 +1,14 @@
+.options-container:hover #cat-arrow {
+  transform: rotate(180deg);
+}
+#cat-arrow {
+  transition: transform 0.3s ease;
+}
+
+.options {
+  transition: all 0.3s ease;
+}
+/* .options-container:hover .options {
+  height: 150px;
+  overflow: none;
+} */

@@ -1,12 +1,13 @@
-import React from "react";
-
 import { Metadata } from "next";
-import HomeLayout from "./components/home/HomeLayout";
+import HomeLayout from "./components/buyer/home/HomeLayout";
+import { Suspense } from "react";
 
 const page = () => {
   return (
     <>
-      <HomeLayout />
+      <Suspense>
+        <HomeLayout />
+      </Suspense>
     </>
   );
 };

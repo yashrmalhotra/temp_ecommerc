@@ -13,8 +13,9 @@ const eslintConfig = [
   ...compat.config({
     extends: ["next/core-web-vitals", "next/typescript"],
     rules: {
-      semi: "on",
+      semi: "error",
       "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
       quotes: ["error", "double", { avoidEscape: true, allowTemplateLiterals: true }],
       "jsx-quotes": ["error", "prefer-double"],
     },

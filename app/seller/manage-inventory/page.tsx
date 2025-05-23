@@ -1,0 +1,20 @@
+import ManageInventory from "@/app/components/seller/ManageInventoryComponents/ManageInventory";
+import React, { Suspense } from "react";
+import { Metadata } from "next";
+import ProtectedSellerRoute from "@/app/components/seller/ProtectedSellerRoute";
+
+const page = () => {
+  return (
+    <>
+      <Suspense>
+        <ProtectedSellerRoute>
+          <ManageInventory />
+        </ProtectedSellerRoute>
+      </Suspense>
+    </>
+  );
+};
+export const metadata: Metadata = {
+  title: "Manage Inventory",
+};
+export default page;

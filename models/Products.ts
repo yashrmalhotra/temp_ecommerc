@@ -74,6 +74,7 @@ const ProductSchema = new Schema<IProduct>(
     createdByStatus: { type: String, default: "inactive" },
     sku: String,
     views: Number,
+    clickCount: Number,
     clickedKeywords: [String],
     orderedOnKeywords: [String],
     pid: String,

@@ -8,6 +8,8 @@ import mongoose, { Document } from "mongoose";
 export interface User {
   name: string;
 }
+
+
 export interface BuyerProductCard {
   title: string;
   mrp: number;
@@ -16,6 +18,7 @@ export interface BuyerProductCard {
   url: string;
   layout?: string;
   ratings?: string;
+  discount?: number;
 }
 export interface ImageCarouselProps {
   isDesktopView: boolean;
@@ -38,10 +41,32 @@ interface Url_Text {
   url: string;
   text: string;
 }
+export interface FiltersState {
+  brand: string[];
+  rating: number[];
+  sortBy: string;
+  discount: number | null;
+  price: number[] | null[];
+}
+export type FiltersAction =
+  | { type: "TOGGLE_CHECKBOX"; payload: { field: keyof Pick<FiltersState, "brand" | "rating">; value: string | number } }
+  | { type: "SORT_BY"; payload: string }
+  | { type: "UPDATE_PRICE"; payload: [number, number] }
+  | { type: "DISCOUNT"; payload: number | null }
+  | { type: "CLEAR_ALL"; payload: any };
 export interface HeaderProps {
   setProducts?: React.Dispatch<SetStateAction<any[]>>;
   setBrands?: React.Dispatch<SetStateAction<string[]>>;
+  setRange?: React.Dispatch<SetStateAction<number[]>>;
   setTotalPages?: React.Dispatch<SetStateAction<number>>;
+  dispatchFilter?: React.Dispatch<FiltersAction>;
+  filters?: FiltersState;
+}
+export interface FilterSortProps {
+  filters: FiltersState;
+  dispatchFilter: React.Dispatch<FiltersAction>;
+  brands: string[];
+  range: number[];
 }
 export interface Option {
   options: Url_Text[];
@@ -104,6 +129,7 @@ export interface ProductInfo {
   fileIDs?: string[];
   urls?: string[];
   pid?: FormDataEntryValue | null;
+  discountPercentage?: number;
 }
 
 export interface OTPProps {
@@ -206,6 +232,7 @@ export interface IProduct extends Document {
   createdBy: string;
   createdByStatus: string;
   views: number;
+  clickCount: number;
   clickedKeywords: string[];
   orderedOnKeywords: string[];
   sku?: string;
@@ -276,24 +303,7 @@ export interface SearchContextTypes {
   isLoading: boolean;
 }
 // Define filter state type
-export interface FiltersState {
-  brand: string[];
-  rating: number[];
-  category: string[];
-  sortBy: string;
-  price: [number, number];
-}
-export type FiltersAction =
-  | { type: "TOGGLE_CHECKBOX"; payload: { field: keyof Pick<FiltersState, "brand" | "rating" | "category">; value: string | number } }
-  | { type: "UPDATE_SORT"; payload: string }
-  | { type: "UPDATE_PRICE"; payload: [number, number] }
-  | { type: "UPDATE_MIN_PRICE"; payload: number }
-  | { type: "UPDATE_MAX_PRICE"; payload: number };
-export interface FilterSortProps {
-  filters: any;
-  dispatchFilter: React.Dispatch<FiltersAction>;
-  brands: string[];
-}
+
 // Define actions for reducer
 
 export const EmailOnlySchema = z.object({

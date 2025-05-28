@@ -2,6 +2,7 @@ import Product from "@/models/Products";
 import { connectToDataBase } from "@/utill/connectDB";
 import { getProductId } from "@/utill/utillityFunctions";
 import ImageKit from "imagekit";
+import { pipeline } from "stream";
 const imageKit = new ImageKit({
   publicKey: process.env.IMAGEKITIO_PUBLIC_KEY as string,
   privateKey: process.env.IMAGEKITIO_PRIVATE_KEY as string,
@@ -56,15 +57,52 @@ export const addProduct = async (data: any): Promise<void> => {
   }
 };
 
-export const getProduct = async (uid: string, rows: number, page: number) => {
+export const getProduct = async (uid: string, rows: number, page: number, filterStatus: string, sort: string, query: string) => {
+  const filter: { createdBy: string; status?: string; $or?: any } = { createdBy: uid };
+  if (query) {
+    filter.$or = [{ "basicInfo.title": { $regex: new RegExp(query, "i") } }, { "basicInfo.sku": { $regex: new RegExp(query, "i") } }];
+  }
+  if (filterStatus && filterStatus != "all") {
+    filter.status = filterStatus;
+  }
+
+  console.log("filter", query);
+
   await connectToDataBase();
-  console.log(uid);
+  console.log(uid, filter);
   const skip = rows * page;
   const limit = rows;
 
+  let sortStage: any = { createdAt: -1 };
+
+  switch (sort) {
+    case "SLTH":
+      sortStage = { "offer.stock": 1 };
+      break;
+    case "SHTL":
+      sortStage = { "offer.stock": -1 };
+      break;
+    case "PLTH":
+      sortStage = { "offer.price": 1 };
+      break;
+    case "PHTL":
+      sortStage = { "offer.price": -1 };
+      break;
+    case "newestFirst":
+      sortStage = { createdAt: -1 };
+      break;
+    case "oldestFirst":
+      sortStage = { createdAt: 1 };
+      break;
+    default:
+      sortStage = { createdAt: -1 };
+      break;
+  }
+
   try {
-    const pipline = await Product.aggregate([
-      { $match: { createdBy: uid } },
+    const pipeline = await Product.aggregate([
+      { $match: filter },
+      { $sort: sortStage },
       {
         $facet: {
           products: [{ $skip: skip }, { $limit: limit }],
@@ -72,24 +110,23 @@ export const getProduct = async (uid: string, rows: number, page: number) => {
         },
       },
     ]);
-    return { data: pipline[0].products, totalProducts: pipline[0].totalProduct[0].count };
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-};
-export const getProductByQuery = async (query: string) => {
-  await connectToDataBase();
-  try {
-    const products = await Product.find({
-      $or: [{ "basicInfo.title": { $regex: new RegExp(query, "i") } }, { "basicInfo.sku": { $regex: new RegExp(query, "i") } }],
-    });
 
-    return products;
+    return { data: pipeline[0].products, totalProducts: pipeline[0].totalProduct[0].count };
   } catch (error: any) {
-    console.log(error);
     throw new Error(error.message);
   }
 };
+// export const getProductByQuery = async (query: string) => {
+//   await connectToDataBase();
+//   try {
+//     const products = await Product.find();
+
+//     return products;
+//   } catch (error: any) {
+//     console.log(error);
+//     throw new Error(error.message);
+//   }
+// };
 export const editProduct = async (data: any) => {
   await connectToDataBase();
   console.log(data, "data");
@@ -103,13 +140,12 @@ export const editProduct = async (data: any) => {
   }
   try {
     const images = data.images.filter((item: string) => item !== undefined);
-    let product = await Product.findOne({ pid: data.pid });
+    const product = await Product.findOne({ pid: data.pid });
     const imageURLs = images.map((item: { name: string }) => item.name);
     const getFileIdsToDeleteFromIK = product.images
       .filter((item: { url: string }) => !imageURLs.some((imgURL: string) => imgURL === item.url))
       .map((file: { fileID: string }) => file.fileID);
     const newFiles = images.filter((item: { name: string }) => !item.name.includes("https:"));
-    const saveExistingURLs = product.images.filter((item: { fileID: string }) => !getFileIdsToDeleteFromIK.includes(item.fileID));
     const newOrderOfImageURLs = imageURLs.map((url: string) => product.images.find((img: { url: string }) => img.url === url));
 
     if (getFileIdsToDeleteFromIK.length > 0) {

@@ -1,3 +1,4 @@
+"use client";
 import React, { forwardRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { Option } from "@/Types/type";
@@ -59,5 +60,5 @@ const Options = forwardRef<HTMLDivElement, Option>(({ options, forpath, isHover,
     </div>
   );
 });
-
+Options.displayName = "Options";
 export default Options;

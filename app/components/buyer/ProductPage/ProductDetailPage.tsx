@@ -20,7 +20,6 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
       try {
         const { data } = await axios.get(`/api/${pid}`);
         setProduct(data.product);
-
         console.log(data);
       } catch (error) {
         console.log(error);

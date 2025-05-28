@@ -1,4 +1,4 @@
-import { useSearchContext } from "@/app/context/PaginationProvider";
+import { useSearchContext } from "@/app/context/SearchProvider";
 import { getPaginationRange } from "@/utill/utillityFunctions";
 import React from "react";
 

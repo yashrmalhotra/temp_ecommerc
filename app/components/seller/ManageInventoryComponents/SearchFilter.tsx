@@ -181,22 +181,6 @@ const SearchFilter: React.FC<InventorySearchFilterProps> = ({ dispatchFilter, ha
             }}
           >
             Oldest first
-          </MenuItem>{" "}
-          <MenuItem
-            onClick={() => {
-              dispatchFilter({ type: "SORT_BY", payload: "statusLTH" });
-              handleSortClose();
-            }}
-          >
-            Status: Low To High
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              dispatchFilter({ type: "SORT_BY", payload: "statusHTL" });
-              handleSortClose();
-            }}
-          >
-            Status: High To Low
           </MenuItem>
         </Menu>
       </div>

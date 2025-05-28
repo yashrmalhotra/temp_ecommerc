@@ -205,4 +205,3 @@ export const deleteBuyerAddress = async (email: string, buyerAddress: Address): 
     throw new Error(error.message);
   }
 };
-

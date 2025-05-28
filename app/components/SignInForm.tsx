@@ -10,7 +10,7 @@ import Link from "next/link";
 import "../CSS/Ecommerce.css";
 import { signIn } from "next-auth/react";
 import Loader from "./Loader";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import GoogleSignIn from "./GoogleSignIn";
 type SignInFormData = z.infer<typeof SignInFormSchema>;
 
@@ -18,6 +18,9 @@ const SignInForm: React.FC<UserForm> = ({ url, role }) => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathName = searchParams.get("cburl");
+
   const {
     register,
     handleSubmit,
@@ -62,7 +65,7 @@ const SignInForm: React.FC<UserForm> = ({ url, role }) => {
       return;
     }
     if (role === "buyer") {
-      router.replace("/");
+      router.replace(pathName || "/");
       setIsLoading(false);
     } else {
       router.replace("/seller/dashboard");
@@ -122,7 +125,7 @@ const SignInForm: React.FC<UserForm> = ({ url, role }) => {
           <div className="flex-grow border-t border-gray-300" />
         </div>
         <div>
-          <GoogleSignIn role={role} setIsLoading={setIsLoading} />
+          <GoogleSignIn role={role} setIsLoading={setIsLoading} pathName={pathName || "/"} />
         </div>
         <div className="self-center">
           <p>

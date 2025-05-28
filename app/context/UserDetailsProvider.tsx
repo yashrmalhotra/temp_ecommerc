@@ -39,11 +39,7 @@ const UserDetailsProvider: React.FC<ReactNodeProp> = ({ children }) => {
     })();
   }, [status, session]);
 
-  window.addEventListener("unload", () => {});
   return <UserDetailsContext.Provider value={{ userDetails, setUserDetails, status }}>{children}</UserDetailsContext.Provider>;
 };
-export const useUserDetails = () => {
-  const context = useContext(UserDetailsContext);
-  return context;
-};
+export const useUserDetails = useContext(UserDetailsContext);
 export default UserDetailsProvider;

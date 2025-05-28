@@ -12,10 +12,12 @@ import { Autocomplete } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Loader from "../Loader";
-import { useSearchContext } from "@/app/context/PaginationProvider";
+import { useSearchContext } from "@/app/context/SearchProvider";
 import { HeaderProps } from "@/Types/type";
 
-const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages }) => {
+import { useAppSelector } from "../../redux/hooks";
+
+const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, dispatchFilter, filters, setRange }) => {
   const [isCategoryOptionHover, setIsCategoryHover] = useState<boolean>(false);
   const [isAccountHover, setIsAccountHover] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages }
   const controllerRef = useRef<AbortController | null>(null);
   const params = useSearchParams();
   const searchContext = useSearchContext()!;
-
+  const cartItems = useAppSelector((state) => state.cart);
   const router = useRouter();
   useEffect(() => {
     const query = params.get("q");
@@ -39,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages }
       controllerRef.current?.abort();
       controllerRef.current = null;
     };
-  }, [searchContext?.pageNumber]);
+  }, [searchContext?.pageNumber, filters]);
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (keyword && keyword.length >= 2) {
@@ -91,12 +93,15 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages }
 
     const controller = new AbortController();
     controllerRef.current = controller;
-    if (setBrands && setProducts && value) {
+    if (setBrands && setProducts && value && setTotalPages && setRange) {
       try {
         searchContext?.setIsLoading(true);
-        const { data } = await axios.get(`/api/productresults?query=${value}&page=${searchContext?.pageNumber!}`, { signal: controller.signal });
+        const { data } = await axios.post("/api/productresults", { query: value, page: searchContext.pageNumber, filters }, { signal: controller.signal })!;
         setProducts(data.products.products);
         setBrands(data.products.brands);
+        if (filters?.price[0] === null && filters?.price[1] === null) {
+          setRange(data.products.range as number[]);
+        }
         setTotalPages(data?.products?.totalCount);
       } catch (error: any) {
         if (axios.isCancel(error)) {
@@ -164,6 +169,7 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages }
                       autoComplete="off"
                       onKeyDown={(e: React.ChangeEvent<HTMLInputElement>) => {
                         if (e.key === "Enter") {
+                          if (dispatchFilter) dispatchFilter({ type: "CLEAR_ALL", payload: "" });
                           e.preventDefault();
                           handleSearch(keyword);
                         }
@@ -181,7 +187,15 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages }
                 </div>
               )}
             </div>
-            <button type="button" onClick={() => handleSearch(keyword)} className="bg-purple-400 rounded-e-xl p-3">
+
+            <button
+              type="button"
+              onClick={() => {
+                if (dispatchFilter) dispatchFilter({ type: "CLEAR_ALL", payload: "" });
+                handleSearch(keyword);
+              }}
+              className="bg-purple-400 rounded-e-xl p-3"
+            >
               <FaSearch />
             </button>
           </form>
@@ -204,7 +218,7 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages }
         </div>
 
         <div className="relative hidden md:flex flex-col items-center justify-center">
-          <span className="absolute z-10 text-white w-full text-center left-1 top-[-7px] text-xl font-bold">1</span>
+          <span className="absolute z-10 text-white w-full text-center left-1 top-[-7px] text-xl font-bold">{cartItems.length}</span>
           <FaShoppingCart size={35} />
         </div>
       </header>

@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionWrapper from "./components/SessionWrapper";
 import UserDetailsProvider from "./context/UserDetailsProvider";
-import PaginationProvider from "./context/PaginationProvider";
+import SearchProvider from "./context/SearchProvider";
+import ReduxProvider from "./components/ReduxProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,13 +28,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <SessionWrapper>
-        <UserDetailsProvider>
-          <PaginationProvider>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
-          </PaginationProvider>
-        </UserDetailsProvider>
-      </SessionWrapper>
+      {/* <Provider store={store}> */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ReduxProvider>
+          <SessionWrapper>
+            <UserDetailsProvider>
+              <SearchProvider>{children}</SearchProvider>
+            </UserDetailsProvider>
+          </SessionWrapper>
+        </ReduxProvider>
+      </body>
+      {/* </Provider> */}
     </html>
   );
 }

@@ -5,11 +5,12 @@ import ProductCard from "../ProductCard";
 import { CiViewColumn } from "react-icons/ci";
 import { FaListUl } from "react-icons/fa";
 import SlidingWindowPagination from "./SlidingWindowPagination";
-import { useSearchContext } from "@/app/context/PaginationProvider";
+import { useSearchContext } from "@/app/context/SearchProvider";
 import ProductCardSkeletonLoader from "../ProductCardSkeletonLoader";
 import { ProductInfo } from "@/Types/type";
 import axios from "axios";
 import { useUserDetails } from "@/app/context/UserDetailsProvider";
+import { useSearchParams } from "next/navigation";
 
 const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> = ({ products, totalPages }) => {
   const [layout, setLayout] = useState<"list" | "column">("list");
@@ -18,7 +19,7 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
   const observerRef = useRef<IntersectionObserver | null>(null);
   const viewedIdsRef = useRef<Set<string>>(new Set());
   const [viewedIds, setViewedIds] = useState<string[]>([]);
-
+  const params = useSearchParams();
   // Set up observer only if user is logged in
   useEffect(() => {
     if (!userDetails?.uid || !products.length) return;
@@ -56,7 +57,7 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
   // API call to track viewed product IDs
   useEffect(() => {
     (async () => {
-      if (viewedIds.length && userDetails?.uid) {
+      if (viewedIds.length && userDetails) {
         try {
           await axios.post("/api/update-views", {
             pids: viewedIds,
@@ -68,6 +69,19 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
       }
     })();
   }, [viewedIds]);
+
+  const handleClick = async (pid: string) => {
+    if (userDetails) {
+      try {
+        await axios.post("/api/update-click", {
+          pid,
+          clickedOnKeyword: params.get("q"),
+        });
+      } catch (error: any) {
+        console.log(error);
+      }
+    }
+  };
 
   return (
     <section className="w-full box-border px-2 md:relative md:top-[4.2rem] md:left-[30%] md:w-[70%]">
@@ -98,8 +112,16 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
 
             <div className={`${layout === "list" ? "block w-full" : "grid md:grid-cols-2 2xl:grid-cols-3"}`}>
               {products.map((item: ProductInfo, i: number) => (
-                <div ref={observeRef} key={item.pid} data-id={item.pid}>
-                  <ProductCard url={item.pid} title={item.basicInfo.title} mrp={item.offer.mrp} price={item.offer.price} imageUrl={item.images[0].url} layout={layout} />
+                <div onClick={() => handleClick(item.pid as string)} ref={observeRef} key={item.pid as string} data-id={item.pid}>
+                  <ProductCard
+                    url={item.pid as string}
+                    title={item.basicInfo.title}
+                    mrp={item.offer.mrp}
+                    price={item.offer.price}
+                    imageUrl={item.images[0].url}
+                    layout={layout}
+                    discount={item.discountPercentage}
+                  />
                 </div>
               ))}
             </div>

@@ -1,10 +1,23 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 import "../../CSS/Ecommerce.css";
 import { BuyerProductCard } from "@/Types/type";
 import StarRatings from "./StarRatings";
 import Link from "next/link";
-const ProductCard: React.FC<BuyerProductCard> = ({ title, mrp, price, imageUrl, layout, url }) => {
+import { useUserDetails } from "@/app/context/UserDetailsProvider";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+const ProductCard: React.FC<BuyerProductCard> = ({ title, mrp, price, imageUrl, layout, url, discount }) => {
+  const { status } = useUserDetails()!;
+  const router = useRouter();
+  const pathName = usePathname();
+  const searchParms = useSearchParams();
+  const handleAddToCart = () => {
+    const redirectTo = `${pathName}?${searchParms.toString()}`;
+    if (status === "unauthenticated") {
+      router.replace(`/signin?cburl=${encodeURIComponent(redirectTo)}`);
+    }
+  };
   return (
     <div className="box-border p-2 my-2 item">
       <div className={`rounded-xl ${layout ? layout === "list" && "flex w-full gap-1 flex-col sm:flex-row" : "w-52 md:w-full p-2"} `}>
@@ -21,19 +34,20 @@ const ProductCard: React.FC<BuyerProductCard> = ({ title, mrp, price, imageUrl, 
             <div className={`${layout === "list" ? "flex flex-col md:flex-row" : ""}`}>
               <div>
                 <span>{price.toLocaleString("en-IN", { style: "currency", currency: "INR" })}</span>&nbsp;
-                {layout === "column" && <span className="text-green-500">({Math.ceil(((mrp - price) / mrp) * 100)}% off)</span>}
+                {layout === "column" && <span className="text-green-500">({discount}% off)</span>}
               </div>
               <div className="text-slate-400">
                 <span>MRP:</span>&nbsp;
                 <span className="line-through">{mrp.toLocaleString("en-IN", { style: "currency", currency: "INR" })}</span>&nbsp;
-                {layout === "list" && <span className="text-green-500">({Math.ceil(((mrp - price) / mrp) * 100)}% off)</span>}
+                {layout === "list" && <span className="text-green-500">({discount}% off)</span>}
               </div>
               &nbsp;
             </div>
           </div>
-          <div className={`flex ${layout === "column" ? "flex-col gap-1" : "gap-5"}`}>
-            <button className="bg-cyan-500  text-white font-bold w-full rounded-md active:bg-cyan-700 mt-2">Buy now</button>
-            <button className="bg-orange-500  text-white font-bold w-full rounded-md active:bg-orange-700 mt-2">Add TO Cart</button>
+          <div className={` ${layout === "column" ? "w-full" : "w-1/4"}`}>
+            <button onClick={handleAddToCart} className="bg-orange-500  text-white font-bold w-full rounded-md active:bg-orange-700 mt-2">
+              Add To Cart
+            </button>
           </div>
         </div>
       </div>

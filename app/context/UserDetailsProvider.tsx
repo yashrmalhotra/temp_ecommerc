@@ -1,14 +1,18 @@
 "use client";
 import React, { useState, createContext, useEffect, useContext } from "react";
 import { useSession } from "next-auth/react";
-import { UserDetailsContextTypes, UserDetails, ReactNodeProp, UserRole } from "@/Types/type";
+import { UserDetailsContextTypes, UserDetails, ReactNodeProp } from "@/Types/type";
 import axios from "axios";
+import { addBulkCart } from "@/app/redux/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 const UserDetailsContext = createContext<UserDetailsContextTypes | undefined>(undefined);
 
 const UserDetailsProvider: React.FC<ReactNodeProp> = ({ children }) => {
   const [userDetails, setUserDetails] = useState<UserDetails | undefined>(undefined);
   const { data: session, status } = useSession();
 
+  const dispatchCartAction = useAppDispatch()!;
+  const cartItems = useAppSelector((state) => state.cart);
   useEffect(() => {
     if (status === "loading") {
       return;
@@ -16,7 +20,8 @@ const UserDetailsProvider: React.FC<ReactNodeProp> = ({ children }) => {
 
     (async () => {
       try {
-        if (session) {
+        if (status === "authenticated") {
+          console.log("cart length", cartItems);
           const response = await axios.get(`/api/user/getuser/${session?.user?.email}`);
           const { user } = response.data;
           setUserDetails({
@@ -37,9 +42,21 @@ const UserDetailsProvider: React.FC<ReactNodeProp> = ({ children }) => {
         console.log("Error, ");
       }
     })();
-  }, [status, session]);
+  }, [status]);
+  useEffect(() => {
+    (async () => {
+      try {
+        if (status === "authenticated" && userDetails) {
+          const { data } = await axios.get(`/api/cart?uid=${userDetails.uid}`);
+          dispatchCartAction(addBulkCart(data.ids));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [status, session, userDetails]);
 
   return <UserDetailsContext.Provider value={{ userDetails, setUserDetails, status }}>{children}</UserDetailsContext.Provider>;
 };
-export const useUserDetails = useContext(UserDetailsContext);
+export const useUserDetails = () => useContext(UserDetailsContext);
 export default UserDetailsProvider;

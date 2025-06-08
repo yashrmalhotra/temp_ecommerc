@@ -1,4 +1,4 @@
-import Product from "@/models/Products";
+import Product from "@/models/Product";
 import { connectToDataBase } from "@/utill/connectDB";
 import { getProductId } from "@/utill/utillityFunctions";
 import ImageKit from "imagekit";
@@ -65,9 +65,6 @@ export const getProduct = async (uid: string, rows: number, page: number, filter
   if (filterStatus && filterStatus != "all") {
     filter.status = filterStatus;
   }
-
-  console.log("filter", query);
-
   await connectToDataBase();
   console.log(uid, filter);
   const skip = rows * page;

@@ -38,6 +38,13 @@ export const connectToDataBase = async () => {
 
   return cached.connection;
 };
-export const client = new Redis({
-  retryStrategy: () => null,
-});
+let redisClient: Redis;
+
+if (!global.redis) {
+  redisClient = new Redis();
+  global.redis = redisClient;
+  redisClient.on("connect", () => console.log("redis connected successfully"));
+} else {
+  redisClient = global.redis;
+}
+export const client = redisClient;

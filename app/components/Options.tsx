@@ -44,13 +44,13 @@ const Options = forwardRef<HTMLDivElement, Option>(({ options, forpath, isHover,
             {context?.userDetails?.email ? (
               <li>
                 <button onClick={handleLogOut} className="bg-sky-700 hover:cursor-pointer hover:bg-sky-800 w-full rounded-md text-white font-semibold">
-                  LogOut
+                  Sign out
                 </button>
               </li>
             ) : (
               <li>
                 <Link href={"/signin"}>
-                  <button className="bg-sky-700 hover:cursor-pointer hover:bg-sky-800 w-full rounded-md text-white font-semibold">Log In</button>
+                  <button className="bg-sky-700 hover:cursor-pointer hover:bg-sky-800 w-full rounded-md text-white font-semibold">Sign in</button>
                 </Link>
               </li>
             )}

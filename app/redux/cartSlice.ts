@@ -1,37 +1,31 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface CartState {
-  id: string;
-  qty: number;
+  [id: string]: number; // dictionary type
 }
-const initialState: CartState[] = [];
+const initialState: CartState | null = {};
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart(state, action: PayloadAction<CartState>) {
-      state.push(action.payload);
+    addBulkCart(state, action: PayloadAction<CartState>) {
+      return action.payload;
+    },
+    addToCart(state, action: PayloadAction<[string, number]>) {
+      const [id, qty] = action.payload;
+      state[id] = qty;
+    },
+    updateQty(state, action: PayloadAction<[string, number]>) {
+      const [id, qty] = action.payload;
+      state[id] = state[id] + qty;
     },
 
-    removeFromCart(state, action: PayloadAction<string>) {
-      const newCart = state.filter((item: { id: string }) => item.id !== action.payload);
-      state = newCart;
-    },
-
-    increaseQty(state, action: PayloadAction<string>) {
-      const item = state.find((item: { id: string }) => item.id === action.payload);
-      if (item) {
-        item.qty += 1;
-      }
-    },
-    decreaseQty(state, action: PayloadAction<string>) {
-      const item = state.find((item: { id: string }) => item.id === action.payload);
-      if (item) {
-        item.qty += 1;
-      }
+    deleteItem(state, action: PayloadAction<string>) {
+      const id = action.payload;
+      delete state[id];
     },
   },
 });
 
-export const { addToCart, removeFromCart, increaseQty, decreaseQty } = cartSlice.actions;
+export const { addToCart, addBulkCart, updateQty, deleteItem } = cartSlice.actions;
 export default cartSlice.reducer;

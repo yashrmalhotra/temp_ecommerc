@@ -12,10 +12,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AddressForm from "./AddressForm";
 import { Address } from "@/Types/type";
 import Confirm from "./ConfirmDialogue";
+import Header from "./Header";
 
 type EditUserDetailsSchema = z.infer<typeof EditUserNameZodSchema>;
 const BuyerAccount = () => {
-  const context = useUserDetails();
+  const context = useUserDetails()!;
   const [nameEdit, setNameEdit] = useState<boolean>(false);
   const [formVisible, setFormVisible] = useState<boolean>(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
@@ -73,74 +74,67 @@ const BuyerAccount = () => {
   };
 
   return (
-    <main>
-      <Confirm deleteConfirmOpen={deleteConfirmOpen} setDeleteConfirmOpen={setDeleteConfirmOpen} address={address!} email={context?.userDetails?.email!} />
-      <div className="w-full h-[50vh] bg-blue-500 flex justify-center items-center">
-        <div className="edit-profile-parent relative w-40 h-40 rounded-full bg-gray-300 flex justify-center items-center">
-          <FaUser className="w-1/4 h-1/4" />
-          <div className="absolute edit-profile text-white w-full h-full rounded-full bg-black bg-opacity-40">
-            <button onClick={handleEditProfilePicture} className="w-full h-full flex flex-col justify-center items-center">
-              <FaCamera className="w-1/4 h-1/4" />
-              <span>Edit Image</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className="p-2 mt-2 flex flex-col md:container md:mx-auto md:p-0">
-        {!nameEdit ? (
-          <div className="p-2 border-b-2 border-blue-300">
-            <div className="flex justify-between items-center">
-              <div>
-                <div className="font-bold">Name</div>
-                <div className="">{context.userDetails.name}</div>
+    <>
+      <Header />
+      <section className="mt-14">
+        <Confirm deleteConfirmOpen={deleteConfirmOpen} setDeleteConfirmOpen={setDeleteConfirmOpen} address={address!} email={context?.userDetails?.email!} />
+
+        <div className="p-2 mt-2 flex flex-col md:container md:mx-auto md:p-0">
+          {!nameEdit ? (
+            <div className="p-2 border-b-2 border-blue-300">
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="font-bold">Name</div>
+                  <div className="">{context?.userDetails?.name}</div>
+                </div>
+                <button onClick={() => handleEditProfile("name")} className="text-blue-300 active:text-blue-400">
+                  <FaEdit size={25} />
+                </button>
               </div>
-              <button onClick={() => handleEditProfile("name")} className="text-blue-300 active:text-blue-400">
+            </div>
+          ) : (
+            <div className="flex justify-between gap-2 items-center">
+              <InputField labelText="Name" placeholder="Name" additionalStyle="w-full" mendatory="*" register={register("name")} error={errors?.name?.message} />
+              <button onClick={handleUpdate} className="text-blue-300 active:text-blue-400 mt-5">
                 <FaEdit size={25} />
               </button>
             </div>
-          </div>
-        ) : (
-          <div className="flex justify-between gap-2 items-center">
-            <InputField labelText="Name" placeholder="Name" additionalStyle="w-full" mendatory="*" register={register("name")} error={errors?.name?.message} />
-            <button onClick={handleUpdate} className="text-blue-300 active:text-blue-400 mt-5">
-              <FaEdit size={25} />
-            </button>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      <div className="mt-2 mb-7 p-2 md:p-0 md:container md:mx-auto">
-        <div className="font-bold">Address</div>
-        <div className="grid  grid-cols-1 sm:grid-cols-3 gap-2">
-          {context?.userDetails?.buyerAddresses &&
-            context?.userDetails?.buyerAddresses.map((val, i) => (
-              <div key={i} className={`group aspect-[2/1] p-2 bg-slate-100 rounded-xl relative  ${val.default && "border-2 border-blue-400"}`}>
-                {val.default && <div className="font-bold md:text-2xl">Default Address</div>}
-                <div className="hidden group-hover:flex flex-col gap-2 absolute top-2 right-3">
-                  <button onClick={() => handleAddressEdit(val as Address, i)} className=" active:bg-blue-700 bg-blue-500 text-white rounded-md p-2">
-                    <FaEdit size={15} />
-                  </button>
-                  <button onClick={() => handleDeleteConfirmOpen(val as Address, i)} className=" active:bg-red-700 bg-red-500 text-white rounded-md p-2">
-                    <MdDelete size={15} />
-                  </button>
+        <div className="mt-2 mb-7 p-2 md:p-0 md:container md:mx-auto">
+          <div className="font-bold">Address</div>
+          <div className="grid  grid-cols-1 sm:grid-cols-3 gap-2">
+            {context?.userDetails?.buyerAddresses &&
+              context?.userDetails?.buyerAddresses.map((val, i) => (
+                <div key={i} className={`group aspect-[2/1] p-2 bg-slate-100 rounded-xl relative  ${val.default && "border-2 border-blue-400"}`}>
+                  {val.default && <div className="font-bold md:text-2xl">Default Address</div>}
+                  <div className="hidden group-hover:flex flex-col gap-2 absolute top-2 right-3">
+                    <button onClick={() => handleAddressEdit(val as Address, i)} className=" active:bg-blue-700 bg-blue-500 text-white rounded-md p-2">
+                      <FaEdit size={15} />
+                    </button>
+                    <button onClick={() => handleDeleteConfirmOpen(val as Address, i)} className=" active:bg-red-700 bg-red-500 text-white rounded-md p-2">
+                      <MdDelete size={15} />
+                    </button>
+                  </div>
+                  <div className="text-base md:text-xl">
+                    {val.address} {val.city || ""}
+                  </div>
+                  <div className="text-base md:text-xl">{val.state}</div>
+                  <div className="text-base md:text-xl">{val.pincode}</div>
                 </div>
-                <div className="text-base md:text-xl">
-                  {val.address} {val.city || ""}
-                </div>
-                <div className="text-base md:text-xl">{val.state}</div>
-                <div className="text-base md:text-xl">{val.pincode}</div>
-              </div>
-            ))}
-          <div className="aspect-[2/1] border-2 rounded-xl flex justify-center items-center">
-            <button onClick={handleFormVisible} className="font-bold add-address-button active:text-blue-300">
-              <div className="text-xl">+</div>
-              <div className="text-xl add-address">Add address</div>
-            </button>
+              ))}
+            <div className="aspect-[2/1] border-2 rounded-xl flex justify-center items-center">
+              <button onClick={handleFormVisible} className="font-bold add-address-button active:text-blue-300">
+                <div className="text-xl">+</div>
+                <div className="text-xl add-address">Add address</div>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      {formVisible && <AddressForm setFormVisible={setFormVisible} email={context?.userDetails?.email!} address={address as Address} />}
-    </main>
+        {formVisible && <AddressForm setFormVisible={setFormVisible} email={context?.userDetails?.email || ""} address={address as Address} />}
+      </section>
+    </>
   );
 };
 

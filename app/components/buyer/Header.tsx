@@ -54,13 +54,14 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
         } finally {
           setIsLoading(false);
         }
-      }, 1000);
+      }, 700);
     }
 
     return () => {
       clearTimeout(timeout);
     };
   }, [keyword]);
+
   const handleCategoryContainerExpand = (): void => {
     setIsCategoryHover(true);
   };
@@ -206,8 +207,7 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
           <Options
             options={[
               { url: "/acc/setting", text: "My Account" },
-              { url: "/acc/order", text: "Orders" },
-              { url: "/acc/wishlist", text: "Wishlist" },
+              { url: "/order", text: "Orders" },
             ]}
             forpath="account"
             isHover={isAccountHover}
@@ -217,10 +217,10 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
           />
         </div>
 
-        <div className="relative hidden md:flex flex-col items-center justify-center">
-          <span className="absolute z-10 text-white w-full text-center left-1 top-[-7px] text-xl font-bold">{cartItems.length}</span>
+        <Link href="/cart" className="relative hidden md:flex flex-col items-center justify-center">
+          <span className="absolute z-10 text-white w-full text-center left-1 top-[-7px] text-xl font-bold">{Object.keys(cartItems).length || 0}</span>
           <FaShoppingCart size={35} />
-        </div>
+        </Link>
       </header>
     </>
   );

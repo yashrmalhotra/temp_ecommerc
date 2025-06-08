@@ -66,7 +66,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ setFormVisible, email, addres
   return (
     <>
       {isLoading && <ThreeDotLoader />}
-      <main className="fixed top-0 w-full h-screen bg-black bg-opacity-30 flex justify-center items-center">
+      <main className="fixed left-0 top-0 w-full h-screen bg-black bg-opacity-30 flex justify-center items-center">
         <div className="w-[80%] md:w-[50%] xl:w-1/3 bg-white flex flex-col gap-5 justify-center  rounded-xl p-5 shadow-[0px_0px 10px]">
           <form onKeyDown={handleKeyDown} className="flex flex-col gap-5">
             <InputField labelText="Address" mendatory="*" placeholder="eg:XYZ-23" register={register("address")} error={errors?.address?.message} additionalStyle="w-full" />

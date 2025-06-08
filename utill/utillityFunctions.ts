@@ -1,13 +1,12 @@
 import FlakeId from "flake-idgen";
 import intFormat from "biguint-format";
-import { UseFormSetValue } from "react-hook-form";
 import { ProductInfo } from "@/Types/type";
 import axios from "axios";
 export const formatTimer = (seconds: number): string => {
-  let sec = Math.floor(seconds % 60)
+  const sec = Math.floor(seconds % 60)
     .toString()
     .padStart(2, "0");
-  let min = Math.floor(seconds / 60)
+  const min = Math.floor(seconds / 60)
     .toString()
     .padStart(2, "0");
 
@@ -15,7 +14,6 @@ export const formatTimer = (seconds: number): string => {
 };
 
 export const parseFormData = (formData: FormData) => {
-
   const productInfo: ProductInfo = {
     category: formData.get("category"),
     createdBy: formData.get("createdBy"),

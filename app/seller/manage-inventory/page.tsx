@@ -1,4 +1,4 @@
-import ManageInventory from "@/app/components/seller/ManageInventoryComponents/ManageInventory";
+import ManageInventory from "@/app/components/seller/manage-inventory/ManageInventory";
 import React, { Suspense } from "react";
 import { Metadata } from "next";
 import ProtectedSellerRoute from "@/app/components/seller/ProtectedSellerRoute";

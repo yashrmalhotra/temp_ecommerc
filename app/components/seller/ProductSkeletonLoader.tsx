@@ -1,8 +1,8 @@
 import React from "react";
-import "../../../CSS/Ecommerce.css";
+import "../../CSS/Ecommerce.css";
 
 const array = new Array(8).fill("");
-const ManageInventoryLoader = () => {
+const ProductSkeletonLoader = () => {
   return (
     <div className="header container md:ml-[2vw] mr-[2vw]  gap-1 bg-slate-200">
       {array.map((_, i) => (
@@ -19,4 +19,4 @@ const ManageInventoryLoader = () => {
   );
 };
 
-export default ManageInventoryLoader;
+export default ProductSkeletonLoader;

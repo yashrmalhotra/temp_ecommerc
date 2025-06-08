@@ -32,10 +32,10 @@ const BannerSlider: React.FC = () => {
   };
   return (
     <>
-      <div className="relative mt-14 h-[40vh] md:min-h-[53vh] overflow-x-hidden" id="img-container">
+      <div className="relative mt-[58px] h-[40vh] md:min-h-[53vh] overflow-x-hidden" id="img-container">
         {img.map((item: ImageInfo, i: number) => (
           <div id="img" key={item.url} className={`absolute w-full h-full imgslide ${i === index && "is-selected"}`}>
-            <img src={item.url} alt="banner" className="w-full h-full" />
+            <img src={item.url} alt="banner" className="w-full h-full object-cover" />
           </div>
         ))}
         <div id="dot-container" className="flex w-full gap-3 justify-center absolute z-10 bottom-3 transition-all ease-linear">

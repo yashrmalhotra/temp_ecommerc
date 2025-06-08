@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import ProductCard from "../ProductCard";
 import { CiViewColumn } from "react-icons/ci";
 import { FaListUl } from "react-icons/fa";
@@ -11,6 +11,7 @@ import { ProductInfo } from "@/Types/type";
 import axios from "axios";
 import { useUserDetails } from "@/app/context/UserDetailsProvider";
 import { useSearchParams } from "next/navigation";
+import MobileNav from "../MobileNav";
 
 const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> = ({ products, totalPages }) => {
   const [layout, setLayout] = useState<"list" | "column">("list");
@@ -19,7 +20,8 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
   const observerRef = useRef<IntersectionObserver | null>(null);
   const viewedIdsRef = useRef<Set<string>>(new Set());
   const [viewedIds, setViewedIds] = useState<string[]>([]);
-  const params = useSearchParams();
+  const searchParms = useSearchParams();
+
   // Set up observer only if user is logged in
   useEffect(() => {
     if (!userDetails?.uid || !products.length) return;
@@ -68,14 +70,15 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
         }
       }
     })();
-  }, [viewedIds]);
+  }, [viewedIds, userDetails]);
 
   const handleClick = async (pid: string) => {
     if (userDetails) {
       try {
         await axios.post("/api/update-click", {
           pid,
-          clickedOnKeyword: params.get("q"),
+          clickedBy: userDetails.uid,
+          clickedOnKeyword: searchParms.get("q"),
         });
       } catch (error: any) {
         console.log(error);
@@ -121,6 +124,8 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
                     imageUrl={item.images[0].url}
                     layout={layout}
                     discount={item.discountPercentage}
+                    prodId={item._id}
+                    query={searchParms.get("q") as string}
                   />
                 </div>
               ))}
@@ -129,6 +134,8 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
           <div className="flex justify-center">
             <SlidingWindowPagination totalPages={Math.ceil(totalPages / 10)} />
           </div>
+          \
+          <MobileNav />
         </>
       )}
     </section>

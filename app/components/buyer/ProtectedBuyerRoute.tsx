@@ -4,6 +4,7 @@ import { ReactNodeProp } from "@/Types/type";
 import Link from "next/link";
 import Loader from "../Loader";
 import { useUserDetails } from "../../context/UserDetailsProvider";
+import Header from "./Header";
 const ProtectedBuyerRoute: React.FC<ReactNodeProp> = ({ children }) => {
   const context = useUserDetails();
 
@@ -20,18 +21,21 @@ const ProtectedBuyerRoute: React.FC<ReactNodeProp> = ({ children }) => {
     return <div>{children}</div>;
   }
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <p className="text-xl font-bold">You are not login</p>
-      <div className="flex gap-1">
-        <Link href={"/signup"} className="text-blue-500 underline visited:text-purple-700">
-          Create account
-        </Link>
-        <span>or</span>
-        <Link href={"/signin"} className="text-blue-500 underline visited:text-purple-700">
-          Sign in
-        </Link>
+    <>
+      <Header />
+      <div className="flex flex-col items-center justify-center h-screen">
+        <p className="text-xl font-bold">You are not login</p>
+        <div className="flex gap-1">
+          <Link href={"/signup"} className="text-blue-500 underline visited:text-purple-700">
+            Create account
+          </Link>
+          <span>or</span>
+          <Link href={"/signin"} className="text-blue-500 underline visited:text-purple-700">
+            Sign in
+          </Link>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 export default ProtectedBuyerRoute;

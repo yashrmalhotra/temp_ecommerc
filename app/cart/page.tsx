@@ -1,7 +1,13 @@
 import React from "react";
+import Cart from "../components/buyer/cart/Cart";
+import ProtectedBuyerRoute from "../components/buyer/ProtectedBuyerRoute";
 
 const page = () => {
-  return <div>Cart</div>;
+  return (
+    <ProtectedBuyerRoute>
+      <Cart />
+    </ProtectedBuyerRoute>
+  );
 };
 
 export default page;

@@ -1,6 +1,6 @@
 import React from "react";
 import "../../CSS/Ecommerce.css";
-const ProdctCardSkeletonLoader: React.FC<{ layout: "list" | "column" }> = ({ layout }) => {
+const ProductCardSkeletonLoader: React.FC<{ layout: "list" | "column" }> = ({ layout }) => {
   const isList = layout === "list";
   return (
     <div className="box-border p-2 my-2 item animate-pulse">
@@ -28,4 +28,4 @@ const ProdctCardSkeletonLoader: React.FC<{ layout: "list" | "column" }> = ({ lay
   );
 };
 
-export default ProdctCardSkeletonLoader;
+export default ProductCardSkeletonLoader;

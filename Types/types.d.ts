@@ -1,3 +1,4 @@
+import Redis from "ioredis";
 import { Connection } from "mongoose";
 import React from "react";
 declare global {
@@ -6,6 +7,8 @@ declare global {
     connection: Connection | null;
     promise: Promise<Connection> | null;
   };
+  // eslint-disable-next-line no-var
+  var redis: Redis | undefined;
 }
 
 declare namespace JSX {

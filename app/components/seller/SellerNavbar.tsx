@@ -18,10 +18,10 @@ import Options from "../Options";
 import axios from "axios";
 const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle }) => {
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  const [isSettingHover, setIsSettingHover] = useState<boolean>(false);
+
   const menuRefButton = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const settingList = useRef<HTMLDivElement | null>(null);
+
   const context = useUserDetails();
   const [pinedLink, setPinedLink] = useState<PinedLinkType[]>([]);
   useEffect(() => {
@@ -89,18 +89,11 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
       setMenuVisible(false);
     }
   });
-  const handleSettingContainerExpand = (): void => {
-    setIsSettingHover(true);
-  };
-  const handleSettingContainerShrink = (): void => {
-    setIsSettingHover(false);
-  };
+
   const handleMenuVisible = () => {
     setMenuVisible(!menuVisible);
   };
-  const getAccountOptionsDivListScrollHeight = (): string => {
-    return `${settingList.current?.scrollHeight}`;
-  };
+
   return (
     <>
       {!context?.userDetails?.isVerified && <NotVerifiedAlert path="seller" />}
@@ -134,22 +127,16 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
               <span>Performance</span>
             </div>
           </div>
-          <div onMouseEnter={handleSettingContainerExpand} onMouseLeave={handleSettingContainerShrink} className="relative justify-center options-container">
-            <div className=" md:flex flex-col items-center hover:text-sky-500 hover:underline cursor-pointer">
-              <div className="text-white flex flex-col items-center ">
-                <FaGear size={20} />
-                <span>Settings</span>
+          <Link href={"/seller/setting"}>
+            <div className="relative justify-center options-container">
+              <div className=" md:flex flex-col items-center hover:text-sky-500 hover:underline cursor-pointer">
+                <div className="text-white flex flex-col items-center ">
+                  <FaGear size={20} />
+                  <span>Settings</span>
+                </div>
               </div>
             </div>
-            <Options
-              additionalStyle="w-28 right-[15px]"
-              options={[{ url: "/seller/setting", text: "My Account" }]}
-              isHover={isSettingHover}
-              setIsHover={setIsSettingHover}
-              ref={settingList}
-              getOptionsDivListScrollHeight={getAccountOptionsDivListScrollHeight}
-            />
-          </div>
+          </Link>
         </div>
       </nav>
 
@@ -230,25 +217,67 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
           </li>
 
           <li className="flex gap-3 border-[1px] border-slate-300 hover:bg-slate-300 h-10 mt-1">
-            <button className="pl-2 pt-2 hover:cursor-pointer">{false ? <MdOutlinePushPin size={20} /> : <RiUnpinLine size={20} />}</button>
+            {isLinkPinned("/seller/manage-order") ? (
+              <button
+                onClick={() => {
+                  removePinedLink("/seller/manage-order");
+                }}
+                className="pl-2 pt-2 hover:cursor-pointer"
+              >
+                <MdOutlinePushPin size={20} />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  addPinedLink("/seller/manage-order", "Manage order");
+                }}
+                className="pl-2 pt-2 hover:cursor-pointer"
+              >
+                <RiUnpinLine size={20} />
+              </button>
+            )}
+
             <div className="border-[1px]"></div>
-            <div className="flex items-center gap-2 justify-center">
-              <span>
-                <IoBagHandle size={20} color="blue" />
-              </span>
-              <span>Manage orders</span>
-            </div>
+            <Link href={"/seller/manage-order"} className="flex items-center">
+              <div className="flex items-center gap-2 justify-center">
+                <span>
+                  <IoBagHandle size={20} color="blue" />
+                </span>
+                <span>Manage Order</span>
+              </div>
+            </Link>
           </li>
 
           <li className="flex gap-3 border-[1px] border-slate-300 hover:bg-slate-300 h-10 mt-1">
-            <button className="pl-2 pt-2 hover:cursor-pointer"> {false ? <MdOutlinePushPin size={20} /> : <RiUnpinLine size={20} />}</button>
+            {isLinkPinned("/seller/manage-return") ? (
+              <button
+                onClick={() => {
+                  removePinedLink("/seller/manage-return");
+                }}
+                className="pl-2 pt-2 hover:cursor-pointer"
+              >
+                <MdOutlinePushPin size={20} />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  addPinedLink("/seller/manage-return", "Manage Return");
+                }}
+                className="pl-2 pt-2 hover:cursor-pointer"
+              >
+                <RiUnpinLine size={20} />
+              </button>
+            )}
+
             <div className="border-[1px]"></div>
-            <div className="flex items-center gap-2 justify-center">
-              <span>
-                <GiReturnArrow size={20} color="orange" />
-              </span>
-              <span>Manage returns</span>
-            </div>
+            <Link href={"/seller/manage-return"} className="flex items-center">
+              <div className="flex items-center gap-2 justify-center">
+                <span>
+                  <GiReturnArrow size={20} color="orange" />
+                </span>
+                <span>Manage Return</span>
+              </div>
+            </Link>
           </li>
 
           <li className="flex gap-3 border-[1px] border-slate-300 hover:bg-slate-300 h-10 mt-1">

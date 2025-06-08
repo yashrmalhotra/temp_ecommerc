@@ -7,19 +7,31 @@ import "../../../CSS/Ecommerce.css";
 import StarRatings from "../StarRatings";
 import Link from "next/link";
 import { ProductInfo } from "@/Types/type";
-
-import { useTheme, useMediaQuery } from "@mui/material";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTheme, useMediaQuery, dialogClasses } from "@mui/material";
 import ImageCarousel from "./ImageCarousel";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { useUserDetails } from "@/app/context/UserDetailsProvider";
+import { addToCart } from "@/app/redux/cartSlice";
 const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
   const [product, setProduct] = useState<ProductInfo>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
-
+  const { status, userDetails } = useUserDetails()!;
+  const cartItems = useAppSelector((state: any) => state.cart);
+  const dispatchCartAction = useAppDispatch();
+  const pathName = usePathname();
+  const router = useRouter();
+  const searchParms = useSearchParams();
+  const [isAvailable, setIsAvailable] = useState<boolean>(false);
   useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get(`/api/${pid}`);
         setProduct(data.product);
+
+        setIsAvailable(data.product?.createdByStatus === "active" && data.product?.offer.stock > 0 && data.product?.status === "live");
         console.log(data);
       } catch (error) {
         console.log(error);
@@ -27,13 +39,32 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
       }
     })();
   }, []);
-
+  const handleAddToCart = async () => {
+    const redirectTo = `${pathName}?${searchParms.toString()}`;
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      router.replace(`/signin?cburl=${encodeURIComponent(redirectTo)}`);
+      return;
+    }
+    if (product?._id) {
+      try {
+        setIsLoading(true);
+        await axios.post("/api/cart", { mode: "addItem", uid: userDetails?.uid, pid: product._id, qty: 1 });
+        dispatchCartAction(addToCart([product._id, 1]));
+      } catch (error: any) {
+        console.log(error.response.data.msg);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
   return (
     <>
       {!product ? (
         <ThreeDotLoader />
       ) : (
         <>
+          {isLoading && <ThreeDotLoader />}
           <Header />
           <section className="mt-[4.5rem]">
             <div className="container mx-auto flex flex-col md:flex-row gap-10 items-start">
@@ -50,14 +81,24 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
                   <div>
                     <span>{product.offer.price.toLocaleString("en-IN", { style: "currency", currency: "INR" })}</span>&nbsp;
                     <span className="text-slate-400 line-through">MRP:{product.offer.mrp.toLocaleString("en-IN", { style: "currency", currency: "INR" })}</span>&nbsp;
-                    {<span className="text-green-500">({Math.ceil(((product.offer.mrp - product.offer.price) / product.offer.mrp) * 100)}% off)</span>}
+                    {<span className="text-green-500">({Math.round(((product.offer.mrp - product.offer.price) / product.offer.mrp) * 100)}% off)</span>}
                   </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-2">
-                  <button className="bg-cyan-500  text-white font-bold w-full rounded-md active:bg-cyan-700 mt-2">Buy now</button>
-                  <button className="bg-orange-500  text-white font-bold w-full rounded-md active:bg-orange-700 mt-2">Add TO Cart</button>
-                </div>
+                {isAvailable ? (
+                  <div className="flex flex-col md:flex-row gap-2">
+                    <button className="bg-cyan-500  text-white font-bold w-full rounded-md active:bg-cyan-700 mt-2">Buy now</button>
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={Object.keys(cartItems).some((item: string) => item === product._id)}
+                      className="bg-orange-500 disabled:bg-orange-200 disabled:cursor-not-allowed text-white font-bold w-full rounded-md active:bg-orange-700 mt-2 active:outline outline-4 outline-offset-2 outline-orange-400"
+                    >
+                      {Object.keys(cartItems).some((item: string) => item === product._id) ? <span>Added to cart</span> : <span>Add to cart</span>}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="font-bold text-red-500">Currently Unavailable</div>
+                )}
                 <div className="mt-20 text-left">
                   <h1 className="text-xl font-bold ">Key Features</h1>
                   <ul className="list-disc ml-5 space-y-2">

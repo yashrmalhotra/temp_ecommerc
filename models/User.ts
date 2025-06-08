@@ -27,13 +27,7 @@ const UserSchema = new Schema<IUSER>(
       type: Boolean,
       default: false,
     },
-    cart: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        quantity: Number,
-      },
-    ],
+
     buyerAddresses: [{ address: String, city: String, state: String, pincode: String, default: Boolean }],
     sellerShopDisplayName: { type: String, unique: true },
     sellerAddress: {

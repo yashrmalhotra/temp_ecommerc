@@ -6,7 +6,6 @@ import nodemailer from "nodemailer";
 import { client } from "../../connectDB";
 import { EventEmitter } from "stream";
 import { getUserId } from "@/utill/utillityFunctions";
-import Product from "@/models/Products";
 export const checkExistingUser = async (email: string, role?: string): Promise<void | string> => {
   await connectToDataBase();
   console.log(role, "role ");
@@ -50,10 +49,7 @@ export const createUser = async (data: any): Promise<void> => {
 
 export const getUser = async (email: string): Promise<UserDetails> => {
   await connectToDataBase();
-  const u = await User.findOne({ email }).select("-password -createdAt -updatedAt");
-  if (u) {
-    var user = u.toObject({ flattenObjectIds: true });
-  }
+  const user = await User.findOne({ email }).select("-password -createdAt -updatedAt");
 
   return user;
 };
@@ -73,7 +69,7 @@ otpEmitter.on("otp:generated", async (email: string, OTP: number) => {
 
   const cooldown = await client.get(`cooldown:${email}`);
   if (!cooldown) {
-    const info = await transPorter.sendMail(
+    await transPorter.sendMail(
       {
         from: `Ecommerce ${process.env.EMAIL}`,
         to: email,

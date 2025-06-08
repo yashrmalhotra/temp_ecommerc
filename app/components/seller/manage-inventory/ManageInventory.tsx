@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useReducer, useState } from "react";
-import ManageInventorLoader from "./ManageInventoryLoader";
+import ManageInventorLoader from "../ProductSkeletonLoader";
 import { useUserDetails } from "@/app/context/UserDetailsProvider";
 import axios from "axios";
 import Link from "next/link";
@@ -125,6 +125,7 @@ const ManageInventory = () => {
   };
 
   const handleSearchClick = async () => {
+    setPage(0);
     fetchProducts();
   };
 

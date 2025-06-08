@@ -9,7 +9,6 @@ export interface User {
   name: string;
 }
 
-
 export interface BuyerProductCard {
   title: string;
   mrp: number;
@@ -19,6 +18,8 @@ export interface BuyerProductCard {
   layout?: string;
   ratings?: string;
   discount?: number;
+  prodId: string;
+  query?: string;
 }
 export interface ImageCarouselProps {
   isDesktopView: boolean;
@@ -130,6 +131,7 @@ export interface ProductInfo {
   urls?: string[];
   pid?: FormDataEntryValue | null;
   discountPercentage?: number;
+  _id: string;
 }
 
 export interface OTPProps {
@@ -147,7 +149,6 @@ export interface IUSER extends Document {
   name: string;
   email: string;
   password: string;
-  cart: mongoose.Types.ObjectId[];
   googleId: string;
   role: string[];
   buyerAddresses?: {
@@ -239,6 +240,11 @@ export interface IProduct extends Document {
   pid?: string;
 }
 
+export interface ICart extends Document {
+  pid: mongoose.Types.ObjectId;
+  uid: string;
+  qty: number;
+}
 export interface LoaderProps {
   width: string;
   height: string;
@@ -498,7 +504,7 @@ export interface ImageURL {
 export interface AddressFormProps {
   setFormVisible: React.Dispatch<SetStateAction<boolean>>;
   email: string;
-  address: Address;
+  address?: Address;
 }
 export interface DeleteConfirmProps {
   deleteConfirmOpen: boolean;
@@ -557,6 +563,28 @@ export const SellerAddressZodSchema = z.object({
   state: z.string().min(1, "State is required"),
   pincode: z.string().min(6, "Please enter valid pincode").max(6, "Please enter valid pincode").regex(/^\d+$/, { message: "Pincode must be a number" }),
 });
+export interface SellerOrderProps {
+  orders: any[];
+  setOrders: React.Dispatch<SetStateAction<any>>;
+  query: string;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<SetStateAction<boolean>>;
+}
+export interface SellerSearchOrderProps {
+  style: string;
+  setQuery: React.Dispatch<SetStateAction<any>>;
+  handleSearch: () => Promise<void>;
+}
+export interface SellerOrderFilterSortProps {
+  filterOptions: string[];
+  sortOptions?: string[];
+}
+export interface SellerOrderPaginationProps {
+  page: number;
+  totalPages: number;
+  setPage: React.Dispatch<SetStateAction<number>>;
+  setRows: React.Dispatch<SetStateAction<number>>;
+}
 export type SellerAddressSchema = z.infer<typeof SellerAddressZodSchema>;
 export interface SellerFormProps {
   formOpen: boolean;

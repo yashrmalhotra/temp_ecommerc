@@ -1,6 +1,6 @@
-import Product from "@/models/Products";
+import Product from "@/models/Product";
 import { client, connectToDataBase } from "@/utill/connectDB";
-import { stepLabelClasses } from "@mui/material";
+import { inngest } from "@/utill/inngest/inngest";
 
 export const getSuggestion = async (keyword: string) => {
   await connectToDataBase();
@@ -53,6 +53,25 @@ export const getProductResult = async (query: string, pageNumber: number, filter
             },
           },
 
+          productAge: {
+            $divide: [{ $subtract: [new Date(), "$createdAt"] }, 1000 * 60 * 60 * 24],
+          },
+
+          recencyScore: {
+            $cond: [
+              {
+                $lte: [
+                  {
+                    $divide: [{ $subtract: [new Date(), "$createdAt"] }, 1000 * 60 * 60 * 24],
+                  },
+                  15,
+                ],
+              },
+              1,
+              0,
+            ],
+          },
+
           discountPercentage: {
             $cond: {
               if: { $gt: ["$offer.mrp", 0] },
@@ -64,6 +83,7 @@ export const getProductResult = async (query: string, pageNumber: number, filter
           },
         },
       },
+
       {
         $addFields: {
           totalScore: {
@@ -72,6 +92,7 @@ export const getProductResult = async (query: string, pageNumber: number, filter
               { $multiply: ["$clickedMatchScore", 5] },
               { $multiply: [{ $ifNull: ["$views", 0] }, 0.5] },
               { $multiply: [{ $ifNull: ["$performance.ratings", 0] }, 2] },
+              { $multiply: ["$recencyScore", 5] },
             ],
           },
         },
@@ -123,6 +144,8 @@ export const getProductResult = async (query: string, pageNumber: number, filter
               subCategory: 1,
               pid: 1,
               discountPercentage: 1,
+              productAge: 1,
+              recencyScore: 1,
             },
           },
         ],
@@ -143,10 +166,14 @@ export const getProductResult = async (query: string, pageNumber: number, filter
 
     const products = result[0].products;
     const totalCount = result[0].totalCount[0]?.count || 0;
-    const minPrice = result[0].priceRange[0].minPrice;
-    const maxPrice = result[0].priceRange[0].maxPrice;
+    const minPrice = result[0].priceRange[0]?.minPrice;
+    const maxPrice = result[0].priceRange[0]?.maxPrice;
 
-    const brands = await Product.distinct("basicInfo.brandName", { subCategory: products[0].subCategory }, { collation: { locale: "en", strength: 1 } });
+    let brands: string[] = [];
+    console.log("results", products[0]);
+    if (products.length > 0) {
+      brands = await Product.distinct("basicInfo.brandName", { subCategory: products[0].subCategory }, { collation: { locale: "en", strength: 1 } });
+    }
     return { products, brands, totalCount, range: [minPrice, maxPrice] };
   } catch (error: any) {
     console.log(error);
@@ -156,34 +183,49 @@ export const getProductResult = async (query: string, pageNumber: number, filter
 
 export const getProduct = async (pid: string) => {
   await connectToDataBase();
-  const product = await Product.findOne({ pid }).select("-_id -keywords");
+  const product = await Product.findOne({ pid }).select("-keywords");
 
   return product;
 };
 export const updateProductViews = async (pids: string[], viewedBy: string) => {
   try {
-    await client.sadd(`viewed-set:${viewedBy}`, ...pids);
+    const key = `viewed-set:${viewedBy}`;
+    const isAdded = await client.sadd(key, ...pids);
+    if (isAdded === 0) {
+      console.log("isaddedd running");
+      return;
+    }
+    console.log("new view to list running");
+    await client.expire(key, 3600);
+    await inngest.send({
+      name: "product-viewed",
+      data: {
+        pids,
+      },
+    });
   } catch (error: any) {
     throw new Error(error.message);
   }
 };
-export const updateProductClicks = async (pid: string, clickedKeyword: string) => {
-  await connectToDataBase();
+export const updateProductClicks = async (pid: string, clickedBy: string, clickedKeyword: string) => {
+  const key = `clicked-set:${clickedBy}`;
+  const isAdded = await client.sadd(key, pid);
+
   try {
-    await Product.updateOne({ pid }, { $addToSet: { clickedKeywords: clickedKeyword }, $inc: { clickCount: 1 } });
-  } catch (error: any) {
-    console.log(error);
-    throw new Error(error.message);
-  }
-};
+    if (isAdded === 0) {
+      console.log("duplicate found");
+      return;
+    }
+    console.log("new click to list running");
 
-export const syncViewsClick = async (uid: string) => {
-  try {
-    const viewsClick = await client.smembers(`viewed-set:${uid}`);
-
-    await Product.updateMany({ pid: { $in: viewsClick } }, { $inc: { views: 1 } });
-
-    await client.del(`viewed-set:${uid}`);
+    client.expire(key, 3600);
+    await inngest.send({
+      name: "product-clicked",
+      data: {
+        pid,
+        clickedKeyword,
+      },
+    });
   } catch (error: any) {
     throw new Error(error.message);
   }

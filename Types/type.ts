@@ -16,7 +16,7 @@ export interface BuyerProductCard {
   imageUrl: string;
   url: string;
   layout?: string;
-  ratings?: string;
+  ratings: number | null;
   discount?: number;
   prodId: string;
   query?: string;
@@ -63,6 +63,11 @@ export interface HeaderProps {
   dispatchFilter?: React.Dispatch<FiltersAction>;
   filters?: FiltersState;
 }
+export interface VoiceSearchProps {
+  setKeyword: React.Dispatch<SetStateAction<string>>;
+  open: boolean;
+  setOpen: React.Dispatch<SetStateAction<boolean>>;
+}
 export interface FilterSortProps {
   filters: FiltersState;
   dispatchFilter: React.Dispatch<FiltersAction>;
@@ -81,11 +86,20 @@ export interface PinedLinkType {
   name: string;
   url: string;
 }
+export interface SellerData {
+  todaySalesAmount: number;
+  todayUnitSolds: number;
+  unshipedOrders: number;
+  totalAmount: number;
+  openReturns: number;
+  chartData: any;
+}
 export interface CardText {
   text: string;
   stats: number;
-  url: string;
+
   amount?: boolean;
+  isLoading: boolean;
 }
 export interface InputProps {
   labelText: string;
@@ -132,6 +146,10 @@ export interface ProductInfo {
   pid?: FormDataEntryValue | null;
   discountPercentage?: number;
   _id: string;
+  performance: {
+    ratings?: number;
+    numberOfRaters?: number;
+  };
 }
 
 export interface OTPProps {
@@ -227,7 +245,7 @@ export interface IProduct extends Document {
     unit_sold: number;
     clicks: number;
     ratings: number;
-    noOfRaters: number;
+    numberOfRaters: number;
   };
   status: "live" | "draft" | "out of stock"; // This determines if it's a draft
   createdBy: string;
@@ -236,6 +254,7 @@ export interface IProduct extends Document {
   clickCount: number;
   clickedKeywords: string[];
   orderedOnKeywords: string[];
+
   sku?: string;
   pid?: string;
 }
@@ -308,9 +327,11 @@ export interface SearchContextTypes {
   setIsLoading: React.Dispatch<SetStateAction<boolean>>;
   isLoading: boolean;
 }
-// Define filter state type
-
-// Define actions for reducer
+export interface SellerNotificationContextTypes {
+  oid: string[] | undefined;
+  setOid: React.Dispatch<SetStateAction<string[]>>;
+  setSellerId: React.Dispatch<SetStateAction<string>>;
+}
 
 export const EmailOnlySchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -578,6 +599,8 @@ export interface SellerSearchOrderProps {
 export interface SellerOrderFilterSortProps {
   filterOptions: string[];
   sortOptions?: string[];
+  setFilter: React.Dispatch<SetStateAction<string>>;
+  setSort: React.Dispatch<SetStateAction<string>>;
 }
 export interface SellerOrderPaginationProps {
   page: number;
@@ -603,4 +626,37 @@ export const SellerBankAccountZodSchema = z.object({
 export type SellerBankAccountSchema = z.infer<typeof SellerBankAccountZodSchema>;
 export interface SellerBankAccountSchemaProps {
   sellerBankAccount: SellerBankAccountSchema;
+}
+export interface IORDER extends Document {
+  oid: string;
+  uid: string;
+  pid: string;
+  paymentId: string;
+  groupOrderId?: string;
+  paymentSession: string;
+  orderedBy: string;
+  orderedByAddress: Address;
+  soldBy: string;
+
+  status: "Pending" | "Ordered" | "Shipped" | "Delivered" | "Returned" | "Return Scheduled" | "Refund Pending" | "Refunded";
+  qty: number;
+  amount: number;
+  shipByDate: Date;
+  deliveredAt: Date;
+}
+export interface IRETURN extends Document {
+  oid: string;
+  uid: string;
+  pid: string;
+  status: "Created" | "Return Approved" | "Refunded";
+  soldBy: string;
+}
+export interface IREVIEW extends Document {
+  oid: string;
+  uid: string;
+  pid: string;
+  name: string;
+  rating: number;
+
+  review: string;
 }

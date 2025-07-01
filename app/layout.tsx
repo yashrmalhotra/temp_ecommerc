@@ -5,6 +5,7 @@ import SessionWrapper from "./components/SessionWrapper";
 import UserDetailsProvider from "./context/UserDetailsProvider";
 import SearchProvider from "./context/SearchProvider";
 import ReduxProvider from "./components/ReduxProvider";
+import SellerNotificationProvider from "./context/SellerNotificationProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,17 +29,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* <Provider store={store}> */}
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ReduxProvider>
           <SessionWrapper>
-            <UserDetailsProvider>
-              <SearchProvider>{children}</SearchProvider>
-            </UserDetailsProvider>
+            <SellerNotificationProvider>
+              <UserDetailsProvider>
+                <SearchProvider>{children}</SearchProvider>
+              </UserDetailsProvider>
+            </SellerNotificationProvider>
           </SessionWrapper>
         </ReduxProvider>
       </body>
-      {/* </Provider> */}
     </html>
   );
 }

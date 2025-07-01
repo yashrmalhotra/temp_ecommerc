@@ -11,7 +11,7 @@ const ProtectedSellerRoute: React.FC<ReactNodeProp> = ({ children }) => {
   useEffect(() => {
     console.log(context);
     if (context?.status === "unauthenticated") {
-      router.replace("/seller/signin");
+      router.push("/seller/signin");
     }
   });
   if (context?.status === "loading") {

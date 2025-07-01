@@ -4,14 +4,11 @@ import "../../../CSS/Ecommerce.css";
 import { FormGroupProps, ImageProps } from "@/Types/type";
 import { MdFlipCameraAndroid, MdDeleteForever } from "react-icons/md";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-const Images: React.FC<FormGroupProps & ImageProps> = memo(({ errors, refs, url, setUrl, setValue, getValues }) => {
+const Images: React.FC<FormGroupProps & ImageProps> = ({ errors, refs, url, setUrl, setValue, getValues }) => {
   const openFile = (ref: HTMLInputElement) => {
     ref.click();
   };
 
-  useEffect(() => {
-    console.log("urls = ", url);
-  }, [url]);
   const changeFile = (ref: HTMLInputElement) => {
     ref.click();
   };
@@ -128,7 +125,7 @@ const Images: React.FC<FormGroupProps & ImageProps> = memo(({ errors, refs, url,
             <>
               <div className="flex">
                 <button
-                  onClick={() => openFile(refs?.current.inputRef3)}
+                  onClick={() => openFile(refs?.current?.inputRef3)}
                   disabled={!getValues("images.1")}
                   type="button"
                   className="active:text-blue-800 hover:underline disabled:cursor-not-allowed"
@@ -153,7 +150,7 @@ const Images: React.FC<FormGroupProps & ImageProps> = memo(({ errors, refs, url,
                   <IoIosArrowForward size={25} color="white" stroke="10" className="hover:fill-blue-400" />{" "}
                 </button>
                 <div className="w-[1px] h-full bg-white bg-opacity-70"></div>{" "}
-                <button type="button" onClick={() => changeFile(refs?.current.inputRef4)}>
+                <button type="button" onClick={() => changeFile(refs?.current?.inputRef4)}>
                   <MdFlipCameraAndroid size={25} color="white" stroke="10" className="hover:fill-blue-400" />{" "}
                 </button>
                 <div className="w-[1px] h-full bg-white bg-opacity-70"></div>
@@ -167,7 +164,7 @@ const Images: React.FC<FormGroupProps & ImageProps> = memo(({ errors, refs, url,
             <>
               <div className="flex">
                 <button
-                  onClick={() => openFile(refs?.current.inputRef4)}
+                  onClick={() => openFile(refs?.current?.inputRef4)}
                   type="button"
                   disabled={!getValues("images.2")}
                   className="active:text-blue-800 hover:underline disabled:cursor-not-allowed"
@@ -183,6 +180,6 @@ const Images: React.FC<FormGroupProps & ImageProps> = memo(({ errors, refs, url,
       </div>
     </section>
   );
-});
+};
 
-export default Images;
+export default memo(Images);

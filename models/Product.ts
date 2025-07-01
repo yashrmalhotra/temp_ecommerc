@@ -67,7 +67,7 @@ const ProductSchema = new Schema<IProduct>(
       unit_sold: Number,
       clicks: Number,
       ratings: Number,
-      noOfRaters: Number,
+      numberOfRaters: Number,
     },
     status: { type: String, enum: ["live", "draft", "out of stock", "inactive"] },
     createdBy: { type: String, index: true },
@@ -77,6 +77,7 @@ const ProductSchema = new Schema<IProduct>(
     clickCount: Number,
     clickedKeywords: [String],
     orderedOnKeywords: [String],
+
     pid: String,
   },
 

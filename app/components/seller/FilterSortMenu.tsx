@@ -5,11 +5,20 @@ import { MdOutlineSort } from "react-icons/md";
 import { Menu, MenuItem, Collapse } from "@mui/material";
 import { SellerOrderFilterSortProps } from "@/Types/type";
 
-const FilterSortMenu: React.FC<SellerOrderFilterSortProps> = ({ filterOptions, sortOptions }) => {
+const FilterSortMenu: React.FC<SellerOrderFilterSortProps> = ({ filterOptions, sortOptions, setSort, setFilter }) => {
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
   const [sortAnchorEl, setSortAnchorEl] = useState<null | HTMLElement>(null);
   const filterOpen = Boolean(filterAnchorEl);
   const sortOpen = Boolean(sortAnchorEl);
+
+  const handleFilterClick = (filter: string) => {
+    setFilterAnchorEl(null);
+    setFilter(filter);
+  };
+  const handleSortClick = (sort: string) => {
+    setSortAnchorEl(null);
+    setSort(sort);
+  };
   return (
     <div className="flex gap-5">
       <div className="">
@@ -21,7 +30,9 @@ const FilterSortMenu: React.FC<SellerOrderFilterSortProps> = ({ filterOptions, s
         </button>
         <Menu anchorEl={filterAnchorEl} open={filterOpen} onClose={() => setFilterAnchorEl(null)} slots={{ transition: Collapse }} slotProps={{ transition: { timeout: 300 } }}>
           {filterOptions.map((item: string, i: number) => (
-            <MenuItem key={i}>{item}</MenuItem>
+            <MenuItem onClick={() => handleFilterClick(item)} key={i}>
+              {item}
+            </MenuItem>
           ))}
         </Menu>
       </div>
@@ -35,7 +46,9 @@ const FilterSortMenu: React.FC<SellerOrderFilterSortProps> = ({ filterOptions, s
         {sortOptions && (
           <Menu anchorEl={sortAnchorEl} open={sortOpen} onClose={() => setSortAnchorEl(null)} slots={{ transition: Collapse }} slotProps={{ transition: { timeout: 300 } }}>
             {sortOptions.map((item: string, i: number) => (
-              <MenuItem key={i}>{item}</MenuItem>
+              <MenuItem onClick={() => handleSortClick(item)} key={i}>
+                {item}
+              </MenuItem>
             ))}
           </Menu>
         )}

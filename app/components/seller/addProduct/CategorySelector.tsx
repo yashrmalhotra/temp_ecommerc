@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { CategorySelectorProps } from "@/Types/type";
 import SellerNavbar from "../SellerNavbar";
 const categories: any = {
-  Electronics: ["Mobiles", "Laptops", "Cameras"],
+  Electronics: ["Mobiles", "Laptops & PCs", "Cameras"],
   Fashion: ["Men", "Women", "Kids"],
   Home: ["Furniture", "Decor", "Kitchen"],
   Books: ["Fiction", "Novel", "Comics"],

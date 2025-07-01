@@ -143,8 +143,7 @@ const ManageInventory = () => {
           ) : (
             <>
               <div className="header flex container md:ml-[2vw] mr-[2vw] mt-2 bg-slate-200  ">
-                <div className="w-full grid grid-cols-[50px_100px_300px_100px_100px_400px] md:grid-cols-[5vw_10vw_35vw_18vw_18vw_10vw]">
-                  <div className="border-b bg-white p-1 box-border text-center font-semibold w-full">S.no</div>
+                <div className="w-full grid grid-cols-[150px_300px_100px_100px_400px] md:grid-cols-[15vw_35vw_18vw_18vw_10vw]">
                   <div className="border-b bg-white p-1 box-border text-center font-semibold w-full">Image</div>
                   <div className="border-b bg-white p-1 box-border text-center font-semibold w-full">Title</div>
                   <div className="border-b bg-white p-1 box-border text-center font-semibold w-full">Price</div>
@@ -154,8 +153,7 @@ const ManageInventory = () => {
               </div>
               <div className="flex flex-col md:ml-[2vw] mr-[2vw] bg-slate-200">
                 {products.map((item: any, i: number) => (
-                  <div key={item._id} className="w-full grid grid-cols-[50px_100px_300px_100px_100px_400px] md:grid-cols-[5vw_10vw_35vw_18vw_18vw_10vw]">
-                    <div className="border-b bg-white p-1 box-border text-center w-full">{i + 1}</div>
+                  <div key={item._id} className="w-full grid grid-cols-[150px_300px_100px_100px_400px] md:grid-cols-[15vw_35vw_18vw_18vw_10vw]">
                     <div className="border-b bg-white p-1 box-border text-center w-full flex items-center justify-center">
                       <img src={item.images[0].url} alt="product-image" className="w-[70%]" />
                     </div>

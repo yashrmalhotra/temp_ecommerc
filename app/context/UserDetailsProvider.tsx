@@ -5,6 +5,7 @@ import { UserDetailsContextTypes, UserDetails, ReactNodeProp } from "@/Types/typ
 import axios from "axios";
 import { addBulkCart } from "@/app/redux/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { useSellerNotification } from "./SellerNotificationProvider";
 const UserDetailsContext = createContext<UserDetailsContextTypes | undefined>(undefined);
 
 const UserDetailsProvider: React.FC<ReactNodeProp> = ({ children }) => {
@@ -13,6 +14,7 @@ const UserDetailsProvider: React.FC<ReactNodeProp> = ({ children }) => {
 
   const dispatchCartAction = useAppDispatch()!;
   const cartItems = useAppSelector((state) => state.cart);
+  const { setSellerId } = useSellerNotification()!;
   useEffect(() => {
     if (status === "loading") {
       return;
@@ -37,6 +39,9 @@ const UserDetailsProvider: React.FC<ReactNodeProp> = ({ children }) => {
             sellerBankAccountDetails: user.sellerBankAccountDetails,
             pinedLink: user.pinedLink,
           });
+          if (user.role.includes("seller")) {
+            setSellerId(user.uid);
+          }
         }
       } catch (error) {
         console.log("Error, ");

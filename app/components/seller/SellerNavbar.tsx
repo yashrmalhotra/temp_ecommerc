@@ -14,8 +14,9 @@ import "../../CSS/Ecommerce.css";
 import { useUserDetails } from "@/app/context/UserDetailsProvider";
 import NotVerifiedAlert from "../NotVerifiedAlert";
 import { PinedLinkType } from "@/Types/type";
-import Options from "../Options";
 import axios from "axios";
+import { Badge } from "@mui/material";
+import { useSellerNotification } from "@/app/context/SellerNotificationProvider";
 const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle }) => {
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
@@ -23,13 +24,13 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const context = useUserDetails();
+  const { oid } = useSellerNotification()!;
   const [pinedLink, setPinedLink] = useState<PinedLinkType[]>([]);
   useEffect(() => {
     if (context?.userDetails?.pinedLink && context?.userDetails?.pinedLink.length > 0) {
       setPinedLink(context.userDetails.pinedLink);
     }
   }, []);
-
   const addPinedLink = async (url: string, name: string) => {
     const newPinedLinkArray = [...pinedLink, { url, name }];
     setPinedLink(newPinedLinkArray);
@@ -109,24 +110,24 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
             <div className=" hover:underline font-bold px-2 border-r-2 text-center flex justify-center text-white">Logo</div>
             <div className="text-[7px] md:text-base hover:underline font-bold px-2 border-r-2 text-white">Seller Dahboard</div>
           </Link>
-
-          <div className="font-bold text-white mx-2">Seller shop name</div>
         </div>
 
         <div className="flex justify-around gap-4 items-center text-sm">
-          <div className="hidden md:flex hover:text-sky-500 hover:underline cursor-pointer">
+          <div className="flex hover:text-sky-500 hover:underline cursor-pointer">
             <div className="text-white flex flex-col items-center">
-              <IoIosMail size={20} />
-              <span>Messages</span>
+              <Badge badgeContent={oid?.length} max={9} color="primary" anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
+                <IoIosMail size={20} />
+              </Badge>
+              <span>Message</span>
             </div>
           </div>
-
+          {/* 
           <div className="hidden md:flex  hover:text-sky-500 hover:underline cursor-pointer">
             <div className="text-white flex flex-col items-center">
               <IoBarChartSharp size={20} />
               <span>Performance</span>
             </div>
-          </div>
+          </div> */}
           <Link href={"/seller/setting"}>
             <div className="relative justify-center options-container">
               <div className=" md:flex flex-col items-center hover:text-sky-500 hover:underline cursor-pointer">
@@ -280,16 +281,37 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
             </Link>
           </li>
 
-          <li className="flex gap-3 border-[1px] border-slate-300 hover:bg-slate-300 h-10 mt-1">
-            <button className="pl-2 pt-2 hover:cursor-pointer"> {false ? <MdOutlinePushPin size={20} /> : <RiUnpinLine size={20} />}</button>
+          {/* <li className="flex gap-3 border-[1px] border-slate-300 hover:bg-slate-300 h-10 mt-1">
+            {isLinkPinned("/seller/manage-payment") ? (
+              <button
+                onClick={() => {
+                  removePinedLink("/seller/manage-payment");
+                }}
+                className="pl-2 pt-2 hover:cursor-pointer"
+              >
+                <MdOutlinePushPin size={20} />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  addPinedLink("/seller/manage-payment", "Manage Payment");
+                }}
+                className="pl-2 pt-2 hover:cursor-pointer"
+              >
+                <RiUnpinLine size={20} />
+              </button>
+            )}
+
             <div className="border-[1px]"></div>
-            <div className="flex items-center gap-2 justify-center">
-              <span>
-                <FaRupeeSign size={20} color="green" />
-              </span>
-              <span>Payments</span>
-            </div>
-          </li>
+            <Link href={"/seller/manage-payment"} className="flex items-center">
+              <div className="flex items-center gap-2 justify-center">
+                <span>
+                  <FaRupeeSign size={20} color="green" />
+                </span>
+                <span>Manage Payment</span>
+              </div>
+            </Link>
+          </li> */}
         </ul>
       </div>
     </>

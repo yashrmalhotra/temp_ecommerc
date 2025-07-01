@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import Loader from "../../Loader";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const options = {
   responsive: true,
@@ -15,26 +16,52 @@ const options = {
       text: "Sales Data",
     },
   },
+  scales: {
+    y: {
+      ticks: {
+        callback: function (value: any) {
+          return value.toLocaleString("en-IN", { style: "currency", currency: "INR" });
+        },
+      },
+    },
+  },
 };
 
-const ChartContainer = () => {
-  const labels = ["1/1", "1/2", "1/3", "1/4", "1/5", "1/7", "1/8", "1/11", "1/2"];
+const ChartContainer: React.FC<{ chartData: any[]; isLoading: boolean }> = ({ chartData, isLoading }) => {
+  const [labels, setLabels] = useState<string[]>([]);
+  const [sales, setSales] = useState<number[]>();
   const cd: Date = new Date();
   cd.setDate(cd.getDate());
+  useEffect(() => {
+    if (chartData.length > 0) {
+      const dataLabels = chartData?.map((item: any) => item.label);
+      const salesDayWise = chartData?.map((item: any) => item.totalSales);
+      setLabels(dataLabels);
+      setSales(salesDayWise);
+    }
+    console.log("chart", chartData);
+  }, [chartData]);
 
   const data = {
     labels,
     datasets: [
       {
-        label: "Dataset 1",
-        data: [125, 235, 237, 289, 500, 400, 800, 100, 50],
+        label: "Sales",
+        data: sales,
         backgroundColor: "blue",
+        maxBarThickness: 30,
       },
     ],
   };
   return (
     <div className="w-full h-full">
-      <Bar options={options} data={data} />
+      {isLoading ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <Loader width="w-10" height="h-10" />
+        </div>
+      ) : (
+        <Bar options={options} data={data} />
+      )}
     </div>
   );
 };

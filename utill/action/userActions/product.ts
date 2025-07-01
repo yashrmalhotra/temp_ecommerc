@@ -2,6 +2,15 @@ import Product from "@/models/Product";
 import { client, connectToDataBase } from "@/utill/connectDB";
 import { inngest } from "@/utill/inngest/inngest";
 
+export const getTrendingProducts = async () => {
+  await connectToDataBase();
+  try {
+    const products = await Product.find({}).sort({ "performance.sales": -1 }).limit(5).select("basicInfo pid offer images performance.ratings");
+    return products;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
 export const getSuggestion = async (keyword: string) => {
   await connectToDataBase();
   const result = await Product.find({ keywords: { $elemMatch: { $regex: new RegExp(keyword, "i") } } }).select("keywords -_id");
@@ -81,6 +90,8 @@ export const getProductResult = async (query: string, pageNumber: number, filter
               else: 0,
             },
           },
+
+          ratings: { $ifNull: [{ $divide: ["$performance.ratings", "$performance.numberOfRaters"] }, 0] },
         },
       },
 
@@ -91,7 +102,7 @@ export const getProductResult = async (query: string, pageNumber: number, filter
               { $multiply: ["$orderedMatchScore", 5] },
               { $multiply: ["$clickedMatchScore", 5] },
               { $multiply: [{ $ifNull: ["$views", 0] }, 0.5] },
-              { $multiply: [{ $ifNull: ["$performance.ratings", 0] }, 2] },
+              { $multiply: ["$ratings", 2] },
               { $multiply: ["$recencyScore", 5] },
             ],
           },
@@ -144,8 +155,7 @@ export const getProductResult = async (query: string, pageNumber: number, filter
               subCategory: 1,
               pid: 1,
               discountPercentage: 1,
-              productAge: 1,
-              recencyScore: 1,
+              ratings: 1,
             },
           },
         ],
@@ -170,7 +180,6 @@ export const getProductResult = async (query: string, pageNumber: number, filter
     const maxPrice = result[0].priceRange[0]?.maxPrice;
 
     let brands: string[] = [];
-    console.log("results", products[0]);
     if (products.length > 0) {
       brands = await Product.distinct("basicInfo.brandName", { subCategory: products[0].subCategory }, { collation: { locale: "en", strength: 1 } });
     }
@@ -183,9 +192,36 @@ export const getProductResult = async (query: string, pageNumber: number, filter
 
 export const getProduct = async (pid: string) => {
   await connectToDataBase();
-  const product = await Product.findOne({ pid }).select("-keywords");
+  const product = await Product.aggregate([
+    { $match: { pid } },
+    {
+      $lookup: {
+        from: "reviews",
+        localField: "pid",
+        foreignField: "pid",
+        as: "reviews",
+      },
+    },
+    {
+      $project: {
+        pid: 1,
+        createdBy: 1,
+        basicInfo: 1,
+        productDescription: 1,
+        offer: 1,
+        "dimensions.productDimensions": 1,
+        createdByStatus: 1,
+        status: 1,
+        images: 1,
+        performance: 1,
+        "reviews.name": 1,
+        "reviews.rating": 1,
+        "reviews.review": 1,
+      },
+    },
+  ]);
 
-  return product;
+  return { productDetails: product[0] };
 };
 export const updateProductViews = async (pids: string[], viewedBy: string) => {
   try {

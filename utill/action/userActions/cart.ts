@@ -27,6 +27,7 @@ export const addItemToCart = async (data: Record<string, any>) => {
           uid,
         },
       });
+      await client.expire(`cart:${uid}`, 3600 * 24);
     }
   } catch (error: any) {
     console.log("error", error.message);

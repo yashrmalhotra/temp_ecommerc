@@ -1,7 +1,10 @@
 import Cart from "@/models/Cart";
 import { inngest } from "../inngest";
 import { connectToDataBase } from "@/utill/connectDB";
-
+import mongoose from "mongoose";
+import Product from "@/models/Product";
+import Order from "@/models/Order";
+import { getGroupOrderId, getOrderId } from "@/utill/utillityFunctions";
 export const syncCartToDB = inngest.createFunction(
   {
     id: "add-cart",
@@ -45,8 +48,9 @@ export const deleteItemToCartInDB = inngest.createFunction(
   },
   { event: "delete-cart-item" },
   async ({ event }) => {
+    await connectToDataBase();
     const { uid, pid } = event.data;
-    console.log("data", pid, uid);
+
     try {
       await Cart.deleteOne({ pid, uid });
       return true;

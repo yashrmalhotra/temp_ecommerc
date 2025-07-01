@@ -85,7 +85,9 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
       }
     }
   };
-
+  const calculateRatings = (ratings: number, raters: number) => {
+    return ratings / raters;
+  };
   return (
     <section className="w-full box-border px-2 md:relative md:top-[4.2rem] md:left-[30%] md:w-[70%]">
       {searchContext?.isLoading ? (
@@ -114,7 +116,7 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
             </div>
 
             <div className={`${layout === "list" ? "block w-full" : "grid md:grid-cols-2 2xl:grid-cols-3"}`}>
-              {products.map((item: ProductInfo, i: number) => (
+              {products.map((item: any, i: number) => (
                 <div onClick={() => handleClick(item.pid as string)} ref={observeRef} key={item.pid as string} data-id={item.pid}>
                   <ProductCard
                     url={item.pid as string}
@@ -126,6 +128,7 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
                     discount={item.discountPercentage}
                     prodId={item._id}
                     query={searchParms.get("q") as string}
+                    ratings={item?.ratings}
                   />
                 </div>
               ))}
@@ -134,7 +137,7 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
           <div className="flex justify-center">
             <SlidingWindowPagination totalPages={Math.ceil(totalPages / 10)} />
           </div>
-          \
+
           <MobileNav />
         </>
       )}

@@ -2,7 +2,6 @@ import Product from "@/models/Product";
 import { connectToDataBase } from "@/utill/connectDB";
 import { getProductId } from "@/utill/utillityFunctions";
 import ImageKit from "imagekit";
-import { pipeline } from "stream";
 const imageKit = new ImageKit({
   publicKey: process.env.IMAGEKITIO_PUBLIC_KEY as string,
   privateKey: process.env.IMAGEKITIO_PRIVATE_KEY as string,
@@ -113,17 +112,7 @@ export const getProduct = async (uid: string, rows: number, page: number, filter
     throw new Error(error.message);
   }
 };
-// export const getProductByQuery = async (query: string) => {
-//   await connectToDataBase();
-//   try {
-//     const products = await Product.find();
 
-//     return products;
-//   } catch (error: any) {
-//     console.log(error);
-//     throw new Error(error.message);
-//   }
-// };
 export const editProduct = async (data: any) => {
   await connectToDataBase();
   console.log(data, "data");

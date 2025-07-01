@@ -2,35 +2,39 @@
 @typescript-eslint/no-explicit-any
  */
 "use client";
-import React, { SetStateAction, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FaMicrophoneAlt, FaSearch, FaUserCircle, FaShoppingCart } from "react-icons/fa";
 import Options from "../Options";
 import "../../CSS/Ecommerce.css";
-import { IoMdArrowDropdown } from "react-icons/io";
 import { Autocomplete } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
+import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import Loader from "../Loader";
 import { useSearchContext } from "@/app/context/SearchProvider";
 import { HeaderProps } from "@/Types/type";
-
 import { useAppSelector } from "../../redux/hooks";
-
+import { FaRegCircleStop } from "react-icons/fa6";
 const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, dispatchFilter, filters, setRange }) => {
-  const [isCategoryOptionHover, setIsCategoryHover] = useState<boolean>(false);
   const [isAccountHover, setIsAccountHover] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>("");
   const [options, setOptions] = useState<string[]>([]);
-  const optionsContainerRef = useRef<HTMLDivElement | null>(null);
-  const categoryDivListRef = useRef<HTMLDivElement | null>(null);
+
   const accountDivListRef = useRef<HTMLDivElement | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
   const params = useSearchParams();
   const searchContext = useSearchContext()!;
   const cartItems = useAppSelector((state) => state.cart);
   const router = useRouter();
+  const { transcript, listening, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
+
+  useEffect(() => {
+    if (transcript === "") return;
+    setKeyword(transcript);
+    console.log(transcript);
+  }, [transcript]);
   useEffect(() => {
     const query = params.get("q");
     if (query) {
@@ -62,23 +66,12 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
     };
   }, [keyword]);
 
-  const handleCategoryContainerExpand = (): void => {
-    setIsCategoryHover(true);
-  };
-
-  const handleCategoryContainerShrink = (): void => {
-    setIsCategoryHover(false);
-  };
   const handleAccountContainerExpand = (): void => {
     setIsAccountHover(true);
   };
 
   const handleAccountContainerShrink = (): void => {
     setIsAccountHover(false);
-  };
-
-  const getCategoryOptionsDivListScrollHeight = (): number | null => {
-    return categoryDivListRef.current && categoryDivListRef.current.scrollHeight;
   };
 
   const getAccountOptionsDivListScrollHeight = (): number | null => {
@@ -118,38 +111,31 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
     router.replace(`/search?q=${value}`);
   };
 
+  const handleListening = () => {
+    if (listening) {
+      SpeechRecognition.stopListening();
+    } else {
+      SpeechRecognition.startListening({ continuous: true });
+    }
+  };
+
+  const handleSearchClick = async () => {
+    SpeechRecognition.stopListening();
+
+    if (dispatchFilter) dispatchFilter({ type: "CLEAR_ALL", payload: "" });
+    await handleSearch(keyword);
+    resetTranscript();
+  };
   return (
     <>
       <header className="w-full px-3 bg-blue-300  border-2 flex fixed top-0 z-50 h-14 md:justify-around items-center box-border">
         <Link href="/" className="hover:underline">
           <div className="font-bold">Brand Name</div>
         </Link>
-        <div
-          ref={optionsContainerRef}
-          onMouseEnter={handleCategoryContainerExpand}
-          onMouseLeave={handleCategoryContainerShrink}
-          className={`relative hidden md:flex flex-col gap-1 justify-center hover:cursor-pointer hover:underline options-container`}
-        >
-          <div className="flex w-52 justify-center">
-            <span>Category</span>
-            <span>
-              <IoMdArrowDropdown size={25} id="cat-arrow" />
-            </span>
-          </div>
-          <Options
-            options={[
-              { url: "/category/cloth", text: "Clothes" },
-              { url: "/category/electronics", text: "Electronics" },
-              { url: "/category/homedecor", text: "Home Decor" },
-              { url: "/category/kitchen_dinning", text: "Kitchen & Dinning" },
-              { url: "/category/mobile_accesories", text: "Mobile & Accessories" },
-            ]}
-            isHover={isCategoryOptionHover}
-            setIsHover={setIsCategoryHover}
-            ref={categoryDivListRef}
-            getOptionsDivListScrollHeight={getCategoryOptionsDivListScrollHeight}
-          />
-        </div>
+        <Link href="/category" className="hover:underline hidden md:inline">
+          <div className="font-bold">Category</div>
+        </Link>
+
         <div className="w-full md:w-1/2">
           <form action="" className="flex">
             <div className="w-full flex relative items-center">
@@ -168,6 +154,7 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
                       placeholder="Search"
                       className="w-full p-2 rounded-s-xl outline-orange-400 active:border-orange-400"
                       autoComplete="off"
+                      value={keyword}
                       onKeyDown={(e: React.ChangeEvent<HTMLInputElement>) => {
                         if (e.key === "Enter") {
                           if (dispatchFilter) dispatchFilter({ type: "CLEAR_ALL", payload: "" });
@@ -179,9 +166,11 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
                   </div>
                 )}
               />
-              <button className="absolute right-7 flex justify-center items-center hover:bg-gray-300 w-fit h-fit rounded-[50%]">
-                <FaMicrophoneAlt size={25} color="blue" />
-              </button>
+              {browserSupportsSpeechRecognition && (
+                <button type="button" onClick={handleListening} className="absolute right-7 flex justify-center items-center hover:bg-gray-300 w-fit h-fit rounded-[50%]">
+                  {listening ? <FaRegCircleStop size={25} color="red" /> : <FaMicrophoneAlt size={25} color="blue" />}
+                </button>
+              )}
               {isLoading && (
                 <div className="absolute right-1">
                   <Loader width="w-5" height="h-5" />
@@ -189,14 +178,7 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
               )}
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                if (dispatchFilter) dispatchFilter({ type: "CLEAR_ALL", payload: "" });
-                handleSearch(keyword);
-              }}
-              className="bg-purple-400 rounded-e-xl p-3"
-            >
+            <button type="button" onClick={handleSearchClick} className="bg-purple-400 rounded-e-xl p-3">
               <FaSearch />
             </button>
           </form>

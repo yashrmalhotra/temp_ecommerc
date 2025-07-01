@@ -9,19 +9,35 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Loader from "../../Loader";
 import { deleteItem, updateQty } from "@/app/redux/cartSlice";
+import MobileNav from "../MobileNav";
+import { useRouter } from "next/navigation";
+import ThreeDotLoader from "../../ThreeDotLoader";
+import { load } from "@cashfreepayments/cashfree-js";
+import { Dialog, Typography } from "@mui/material";
+import { GoAlertFill } from "react-icons/go";
+
 const Cart = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isQtyLoading, setIsQtyLoading] = useState<boolean>(false);
+  const [isCheckOutLoading, setIsCheckOutLoading] = useState<boolean>(false);
   const [pid, setPid] = useState<string>("");
   const dispatchCartAction = useAppDispatch();
   const [cart, setCart] = useState<any[]>([]);
   const { userDetails } = useUserDetails()!;
+  const [error, setError] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
   const cartItems = useAppSelector((state) => state.cart);
+
+  const router = useRouter();
   useEffect(() => {
     (async () => {
       try {
-        if (userDetails) setIsLoading(true);
+        if (userDetails) {
+          setIsLoading(true);
+        }
+
         const { data } = await axios.get(`/api/cart-item?uid=${userDetails?.uid}`);
+
         for (const item of data.items) {
           if (item.pid.offer.stock !== 0 && item.pid.createdByStatus === "active" && item.pid.status === "live") {
             item.isSelected = true;
@@ -54,6 +70,7 @@ const Cart = () => {
       setIsQtyLoading(false);
     }
   };
+
   const selectedItems = useMemo(() => cart.filter((item) => item.isSelected), [cart]);
   const totalPrice = useMemo(() => {
     return selectedItems.reduce((total: number, item: any) => total + item.pid.offer.price * (cartItems[item.pid._id] || 1), 0);
@@ -103,9 +120,81 @@ const Cart = () => {
       setPid("");
     }
   };
+
+  const initializeSDK = async (sessionId: string) => {
+    try {
+      const cashfree = await load({
+        mode: "sandbox",
+      });
+
+      const checkoutOptions = {
+        paymentSessionId: sessionId,
+        redirectTarget: "_modal",
+      };
+      cashfree
+        .checkout(checkoutOptions)
+        .then(() => {
+          router.replace("/order");
+        })
+        .catch((error: any) => {
+          console.error("Cashfree checkout failed:", error); // Log the actual error
+          setError("Payment failed: " + (error.message || "Unknown error"));
+          setOpen(true); // Open the error dialog
+        });
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  };
+  const handleCheckOut = async () => {
+    const buyerAddress = userDetails?.buyerAddresses[0];
+    if (!buyerAddress) {
+      alert("Please enter address first");
+      router.replace("/acc");
+      return;
+    }
+    const selectedItems = cart.filter((item: Record<string, any>) => item.isSelected);
+    const orderData = selectedItems.map((item: Record<string, any>) => ({ pid: item.pid.pid, qty: cartItems[item.pid._id] }));
+
+    const details = {
+      uid: userDetails?.uid,
+      customer_name: userDetails?.name,
+      customer_email: userDetails?.email,
+      orderedByAddress: buyerAddress,
+      total: totalPrice,
+      orderData,
+    };
+
+    try {
+      setIsCheckOutLoading(true);
+      const { data } = await axios.post("/api/cart/checkout", { details });
+      // await initializeSDK(data.session);
+    } finally {
+      setIsCheckOutLoading(false);
+    }
+  };
   return (
     <>
       <Header />
+      {isCheckOutLoading && <ThreeDotLoader />}
+      <Dialog open={open} onClose={() => setOpen(false)} slotProps={{ paper: { sx: { padding: "10px", width: { sx: "80%", md: "30%" } } } }}>
+        <Typography
+          sx={{
+            color: "red",
+            fontWeight: "bold",
+            fontSize: { sx: "1rem", md: "1.5rem" },
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "5px",
+            width: "100%",
+          }}
+        >
+          <GoAlertFill fill="yellow" />
+          {error}
+        </Typography>
+      </Dialog>
+
       {isLoading ? (
         <div className="mt-14">
           {Array(5)
@@ -210,11 +299,14 @@ const Cart = () => {
                 <div>Total price:</div>
                 <div>{totalPrice.toLocaleString("en-IN", { style: "currency", currency: "INR" })}</div>
               </div>
-              <button className="bg-cyan-500 active:bg-cyan-700 text-white self-center font-bold w-full md:w-[70%] rounded-md">Buy Now</button>
+              <button onClick={handleCheckOut} className="bg-cyan-500 active:bg-cyan-700 text-white self-center font-bold w-full md:w-[70%] rounded-md">
+                Buy Now
+              </button>
             </div>
           </section>
         </>
       )}
+      <MobileNav />
     </>
   );
 };

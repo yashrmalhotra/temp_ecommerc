@@ -19,7 +19,7 @@ const UserSchema = new Schema<IUSER>(
     googleId: { type: String },
     role: [
       {
-        type: "String",
+        type: String,
         enum: ["buyer", "seller"],
       },
     ],

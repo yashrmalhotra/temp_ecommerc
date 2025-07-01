@@ -1,6 +1,7 @@
 import FlakeId from "flake-idgen";
 import intFormat from "biguint-format";
 import { ProductInfo } from "@/Types/type";
+import crypto from "crypto";
 import axios from "axios";
 export const formatTimer = (seconds: number): string => {
   const sec = Math.floor(seconds % 60)
@@ -137,4 +138,19 @@ export const getPaginationRange = (currentPage: number, totalPages: number) => {
   }
 
   return range;
+};
+const oid = new FlakeId({ id: 1 });
+export const getOrderId = (sellerId: string, buyerId: string) => {
+  const flake = intFormat(oid.next(), "dec");
+
+  const sellerIdSlice = sellerId.slice(2, 5);
+  const buyerIdSlice = buyerId.slice(2, 5);
+  return `ODR${sellerIdSlice}${buyerIdSlice}${flake.slice(0, 8)}`;
+};
+const goid = new FlakeId({ id: 2 });
+
+export const getGroupOrderId = (buyerId: string) => {
+  const flake = intFormat(goid.next(), "dec");
+  const buyerIdSlice = buyerId.slice(2, 5);
+  return `GODR${buyerIdSlice}${flake.slice(0, 8)}`;
 };

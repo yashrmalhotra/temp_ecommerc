@@ -1,12 +1,15 @@
 import OrderDetails from "@/app/components/seller/manage-order/OrderDetails";
 import ProtectedSellerRoute from "@/app/components/seller/ProtectedSellerRoute";
-import React from "react";
+import React, { Suspense } from "react";
 
-const page = () => {
+const page: React.FC<{ params: { detail: string } }> = ({ params }) => {
+  const { detail } = params;
   return (
-    <ProtectedSellerRoute>
-      <OrderDetails />
-    </ProtectedSellerRoute>
+    <Suspense>
+      <ProtectedSellerRoute>
+        <OrderDetails detail={detail} />
+      </ProtectedSellerRoute>
+    </Suspense>
   );
 };
 

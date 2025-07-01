@@ -13,6 +13,8 @@ import AddressForm from "./AddressForm";
 import { Address } from "@/Types/type";
 import Confirm from "./ConfirmDialogue";
 import Header from "./Header";
+import MobileNav from "./MobileNav";
+import Link from "next/link";
 
 type EditUserDetailsSchema = z.infer<typeof EditUserNameZodSchema>;
 const BuyerAccount = () => {
@@ -81,17 +83,24 @@ const BuyerAccount = () => {
 
         <div className="p-2 mt-2 flex flex-col md:container md:mx-auto md:p-0">
           {!nameEdit ? (
-            <div className="p-2 border-b-2 border-blue-300">
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="font-bold">Name</div>
-                  <div className="">{context?.userDetails?.name}</div>
+            <>
+              <div className="p-2 border-b-2 border-blue-300">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="font-bold">Name</div>
+                    <div className="">{context?.userDetails?.name}</div>
+                  </div>
+                  <button onClick={() => handleEditProfile("name")} className="text-blue-300 active:text-blue-400">
+                    <FaEdit size={25} />
+                  </button>
                 </div>
-                <button onClick={() => handleEditProfile("name")} className="text-blue-300 active:text-blue-400">
-                  <FaEdit size={25} />
-                </button>
               </div>
-            </div>
+              {context?.userDetails?.role.includes("seller") && (
+                <Link href={"/seller/dashboard"} className="block md:hidden p-2 bg-slate-100 mt-2 rounded-xl">
+                  Seller
+                </Link>
+              )}
+            </>
           ) : (
             <div className="flex justify-between gap-2 items-center">
               <InputField labelText="Name" placeholder="Name" additionalStyle="w-full" mendatory="*" register={register("name")} error={errors?.name?.message} />
@@ -132,6 +141,7 @@ const BuyerAccount = () => {
             </div>
           </div>
         </div>
+        <MobileNav />
         {formVisible && <AddressForm setFormVisible={setFormVisible} email={context?.userDetails?.email || ""} address={address as Address} />}
       </section>
     </>

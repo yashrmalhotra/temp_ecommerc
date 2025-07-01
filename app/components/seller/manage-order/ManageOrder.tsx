@@ -8,16 +8,17 @@ import { useUserDetails } from "@/app/context/UserDetailsProvider";
 import axios from "axios";
 import SearchResults from "./SearchResults";
 import ReadOnlyOrders from "./ReadOnlyOrder";
+
 const ManageOrder = () => {
-  const [tab, setTab] = useState<"Pending" | "Unshipped" | "Send">("Unshipped");
+  const [tab, setTab] = useState<"Pending" | "Unshiped" | "Send">("Unshiped");
   const [query, setQuery] = useState<string>("");
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { userDetails } = useUserDetails()!;
 
   const handleSearch = async () => {
     try {
-      setOrders([]);
       setIsLoading(true);
       const { data } = await axios.get(`/api/seller/manageorder?uid=${userDetails?.uid}&query=${query}`);
       setOrders(data.orders.orders);
@@ -40,8 +41,8 @@ const ManageOrder = () => {
             <button onClick={() => setTab("Pending")} className={`text-xl ${tab === "Pending" && "border-b-2 border-blue-500"}`}>
               Pending
             </button>
-            <button onClick={() => setTab("Unshipped")} className={`text-xl ${tab === "Unshipped" && "border-b-2 border-blue-500"}`}>
-              Unshipped
+            <button onClick={() => setTab("Unshiped")} className={`text-xl ${tab === "Unshiped" && "border-b-2 border-blue-500"}`}>
+              Unshiped
             </button>
             <button onClick={() => setTab("Send")} className={`text-xl ${tab === "Send" && "border-b-2 border-blue-500"}`}>
               Send
@@ -52,7 +53,7 @@ const ManageOrder = () => {
         )}
 
         {tab === "Pending" && !query && <ReadOnlyOrders query={query} orders={orders} setOrders={setOrders} isLoading={isLoading} setIsLoading={setIsLoading} status="Pending" />}
-        {tab === "Unshipped" && !query && <DispatchOrder query={query} orders={orders} setOrders={setOrders} isLoading={isLoading} setIsLoading={setIsLoading} />}
+        {tab === "Unshiped" && !query && <DispatchOrder query={query} orders={orders} setOrders={setOrders} isLoading={isLoading} setIsLoading={setIsLoading} />}
         {tab === "Send" && !query && <ReadOnlyOrders query={query} orders={orders} setOrders={setOrders} isLoading={isLoading} setIsLoading={setIsLoading} status="Send" />}
       </section>
     </>

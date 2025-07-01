@@ -14,8 +14,9 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { useUserDetails } from "@/app/context/UserDetailsProvider";
 import { addToCart } from "@/app/redux/cartSlice";
 const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
-  const [product, setProduct] = useState<ProductInfo>();
+  const [product, setProduct] = useState<ProductInfo & { soldBy: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [quantity, setQuantity] = useState<number>(1);
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
   const { status, userDetails } = useUserDetails()!;
@@ -25,20 +26,27 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
   const router = useRouter();
   const searchParms = useSearchParams();
   const [isAvailable, setIsAvailable] = useState<boolean>(false);
+  const [reviews, setReviews] = useState<Record<string, any>[]>([]);
   useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get(`/api/${pid}`);
-        setProduct(data.product);
+        setProduct(data.product.productDetails);
 
-        setIsAvailable(data.product?.createdByStatus === "active" && data.product?.offer.stock > 0 && data.product?.status === "live");
-        console.log(data);
+        setIsAvailable(
+          data.product?.productDetails?.createdByStatus === "active" && data.product?.productDetails?.offer.stock > 0 && data.product?.productDetails?.status === "live"
+        );
+        if (data.product?.productDetails?.reviews) {
+          setReviews(data.product?.productDetails?.reviews);
+        }
+        console.log(data.product?.productDetails?.reviews, "data.product?.productDetails?.reviews");
       } catch (error) {
         console.log(error);
       } finally {
       }
     })();
   }, []);
+
   const handleAddToCart = async () => {
     const redirectTo = `${pathName}?${searchParms.toString()}`;
     if (status === "loading") return;
@@ -58,6 +66,25 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
       }
     }
   };
+  const handleCheckOut = async () => {
+    const redirectTo = `${pathName}?${searchParms.toString()}`;
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      router.replace(`/signin?cburl=${encodeURIComponent(redirectTo)}`);
+      return;
+    }
+    if (userDetails?.uid && product) {
+      const kw = searchParms.get("kw");
+      router.replace(`/order/checkout?pid=${product?.pid}&price=${product?.offer.price}&qty=${quantity}&kw=${kw}&soldBy=${product.createdBy}`);
+    }
+  };
+
+  const handleSelectQty = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setQuantity(Number(e.target.value));
+  };
+  const calculateRatings = (ratings: number, raters: number) => {
+    return ratings / raters;
+  };
   return (
     <>
       {!product ? (
@@ -75,7 +102,9 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
                 </Link>
                 <div className="font-bold md:text-xl">{product.basicInfo.title}</div>
                 <div>
-                  <StarRatings rating={5} />
+                  {product?.performance?.ratings && product?.performance?.numberOfRaters && (
+                    <StarRatings rating={calculateRatings(product?.performance?.ratings, product?.performance?.numberOfRaters)} />
+                  )}
                 </div>
                 <div>
                   <div>
@@ -86,16 +115,33 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
                 </div>
 
                 {isAvailable ? (
-                  <div className="flex flex-col md:flex-row gap-2">
-                    <button className="bg-cyan-500  text-white font-bold w-full rounded-md active:bg-cyan-700 mt-2">Buy now</button>
-                    <button
-                      onClick={handleAddToCart}
-                      disabled={Object.keys(cartItems).some((item: string) => item === product._id)}
-                      className="bg-orange-500 disabled:bg-orange-200 disabled:cursor-not-allowed text-white font-bold w-full rounded-md active:bg-orange-700 mt-2 active:outline outline-4 outline-offset-2 outline-orange-400"
-                    >
-                      {Object.keys(cartItems).some((item: string) => item === product._id) ? <span>Added to cart</span> : <span>Add to cart</span>}
-                    </button>
-                  </div>
+                  <>
+                    <span className="flex bg-slate-100 p-2 rounded-xl space-x-1">
+                      <label htmlFor="">Qty:</label>
+                      <select onChange={handleSelectQty} value={quantity} name="" id="" className="bg-inherit">
+                        <option value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                        <option value={4}>4</option>
+                        <option value={5}>5</option>
+                      </select>
+                    </span>
+                    <div className="flex flex-col md:flex-row gap-2">
+                      <button
+                        onClick={handleCheckOut}
+                        className="bg-cyan-500  text-white font-bold w-full rounded-md active:bg-cyan-700 active:outline outline-4 outline-offset-2 outline-blue-400 mt-2"
+                      >
+                        Buy now
+                      </button>
+                      <button
+                        onClick={handleAddToCart}
+                        disabled={Object.keys(cartItems).some((item: string) => item === product._id)}
+                        className="bg-orange-500 disabled:bg-orange-200 disabled:cursor-not-allowed text-white font-bold w-full rounded-md active:bg-orange-700 mt-2 active:outline outline-4 outline-offset-2 outline-orange-400"
+                      >
+                        {Object.keys(cartItems).some((item: string) => item === product._id) ? <span>Added to cart</span> : <span>Add to cart</span>}
+                      </button>
+                    </div>
+                  </>
                 ) : (
                   <div className="font-bold text-red-500">Currently Unavailable</div>
                 )}
@@ -116,14 +162,17 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
 
             <div className="mt-20 container mx-auto box-border px-2 md:px-0">
               <h1 className="text-xl font-bold">Addition Info</h1>
-
+              <div className="grid grid-cols-2 border border-gray-400">
+                <div className="bg-gray-200 p-1 border border-b-0">Manufacturer</div>
+                <div className="p-1 border border-b-0">{product.basicInfo.manufacturer.charAt(0).toUpperCase() + product.basicInfo.manufacturer.slice(1)}</div>
+              </div>
               {product.additionalInfo &&
                 product.additionalInfo.map((item: { key: string; value: string }, i: number) => (
                   <div key={i} className="grid grid-cols-2 border border-gray-400">
                     {
                       <>
                         <div className={`bg-gray-200 p-1 border ${i !== product.additionalInfo.length - 1 && "border-b-0"}`}>
-                          {item.key.charAt(0).toUpperCase() + item.key.slice(1)}{" "}
+                          {item.key.charAt(0).toUpperCase() + item.key.slice(1)}
                         </div>
                         <div className="p-1 border">{item.value.charAt(0).toUpperCase() + item.value.slice(1)} </div>
                       </>
@@ -151,6 +200,21 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
                 </div>
               </div>
             </div>
+
+            {reviews.length > 0 && (
+              <div className="mt-20 container mx-auto box-border px-2 md:px-0">
+                <h1 className="text-base md:text-xl font-bold">Reviews</h1>
+                {reviews.map((item: any, i: number) => (
+                  <div key={i} className="p-2">
+                    <div className="font-bold">{item?.name}</div>
+                    <div>
+                      <StarRatings rating={item?.rating} />
+                    </div>
+                    <div>{item?.review}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         </>
       )}

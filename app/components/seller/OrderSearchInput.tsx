@@ -3,7 +3,6 @@ import { SellerSearchOrderProps } from "@/Types/type";
 import React, { SetStateAction, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 const OrderSearchInput: React.FC<SellerSearchOrderProps> = ({ style, setQuery, handleSearch }) => {
-  const [input, setInput] = useState<string>("");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
   };

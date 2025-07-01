@@ -19,7 +19,7 @@ const StarRatings: React.FC<{ rating: number }> = ({ rating }) => {
   }
   return (
     <div className="flex">
-      {stars}&nbsp; {rating}
+      {stars}&nbsp; {rating % 1 === 0 ? rating : rating.toFixed(1)}
     </div>
   );
 };

@@ -1,14 +1,46 @@
 "use client";
-import React, { SetStateAction, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, Box, Button, Rating } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
-const ReviewComponent: React.FC<{ open: boolean; setOpen: React.Dispatch<SetStateAction<boolean>> }> = ({ open, setOpen }) => {
+import Loader from "../../Loader";
+import { useUserDetails } from "@/app/context/UserDetailsProvider";
+import axios from "axios";
+const ReviewComponent: React.FC<{
+  open: boolean;
+  setOpen: React.Dispatch<SetStateAction<boolean>>;
+  existingReview: string | undefined;
+  existingRating: number | undefined;
+  pid: string;
+  oid: string;
+}> = ({ open, setOpen, existingReview, existingRating, pid, oid }) => {
   const [review, setReview] = useState<string>("");
   const [value, setValue] = useState<number | null>(0);
   const [hover, setHover] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { userDetails } = useUserDetails()!;
+
+  useEffect(() => {
+    if (existingReview) {
+      setReview(existingReview);
+    }
+    if (existingRating) {
+      setValue(existingRating);
+    }
+  }, []);
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReview(e.target.value);
   };
+
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      await axios.post("/api/review", { oid, uid: userDetails?.uid, pid, rating: value, review, name: userDetails?.name });
+      setOpen(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Dialog
       open={open}
@@ -42,14 +74,25 @@ const ReviewComponent: React.FC<{ open: boolean; setOpen: React.Dispatch<SetStat
       </DialogContent>
       <DialogContent sx={{ padding: "7px" }}>
         <Box sx={{ padding: "7px" }}>
-          <textarea onChange={handleChange} name="" id="" className="border active:border-black active:outline-4 outline-blue-500 outline-offset-8 w-full"></textarea>
+          <textarea
+            onChange={handleChange}
+            value={review}
+            name=""
+            id=""
+            className="border active:border-black active:outline-4 outline-blue-500 outline-offset-8 w-full"
+          ></textarea>
         </Box>
         <DialogActions>
           <Button onClick={() => setOpen(false)} sx={{ color: "#fff", background: "#d52a28", "&:active": { background: "#ef4444" } }} disableRipple>
             Close
           </Button>
-          <Button sx={{ color: "#fff", background: "#3b82f6", "&:active": { background: "#60a5fa" } }} disableRipple>
-            Submit
+          <Button
+            onClick={handleSubmit}
+            disabled={value === 0}
+            sx={{ color: "#fff", background: "#3b82f6", "&:active": { background: "#60a5fa" }, "&:disabled": { background: "#9ca3af" } }}
+            disableRipple
+          >
+            {isLoading ? <Loader width="w-5" height="h-5" /> : <span>Submit</span>}
           </Button>
         </DialogActions>
       </DialogContent>

@@ -11,7 +11,7 @@ import { addToCart } from "@/app/redux/cartSlice";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Loader from "../Loader";
 import axios from "axios";
-const ProductCard: React.FC<BuyerProductCard> = ({ title, mrp, price, imageUrl, layout, url, discount, prodId, query }) => {
+const ProductCard: React.FC<BuyerProductCard> = ({ title, mrp, price, imageUrl, layout, url, discount, prodId, query, ratings }) => {
   const { status, userDetails } = useUserDetails()!;
   const dispatchCartAction = useAppDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -40,6 +40,8 @@ const ProductCard: React.FC<BuyerProductCard> = ({ title, mrp, price, imageUrl, 
     }
   };
 
+  console.log("inside pc", ratings);
+
   return (
     <div className="box-border p-2 my-2 item">
       <div className={`rounded-xl ${layout ? layout === "list" && "flex w-full gap-1 flex-col sm:flex-row" : "w-52 md:w-full p-2"} `}>
@@ -57,7 +59,7 @@ const ProductCard: React.FC<BuyerProductCard> = ({ title, mrp, price, imageUrl, 
             >
               <div className="w-full text-sm  md:text-base text-ellipsis overflow-hidden max-h-1/2 line-clamp-2">{title}</div>
             </Link>
-            <StarRatings rating={5} />
+            {ratings > 0 && <StarRatings rating={ratings} />}
             <div className={`${layout === "list" ? "flex flex-col md:flex-row" : ""}`}>
               <div>
                 <span>{price.toLocaleString("en-IN", { style: "currency", currency: "INR" })}</span>&nbsp;

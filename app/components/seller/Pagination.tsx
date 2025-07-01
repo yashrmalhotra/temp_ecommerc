@@ -1,7 +1,7 @@
 import { SellerOrderPaginationProps } from "@/Types/type";
 import React from "react";
 
-const Pagination: React.FC<SellerOrderPaginationProps> = ({ page, setPage, setRows, totalPages }) => {
+const Pagination: React.FC<SellerOrderPaginationProps> = ({ rows, page, setPage, setRows, totalPages }) => {
   const handlePage = (pos: string) => {
     if (pos === "next") {
       setPage(page + 1);
@@ -18,7 +18,7 @@ const Pagination: React.FC<SellerOrderPaginationProps> = ({ page, setPage, setRo
     <>
       <div className="flex items-center gap-3 ml-[2vw] mt-5">
         <div>
-          <select onChange={handleRowsChange} name="" id="" className="p-2">
+          <select onChange={handleRowsChange} value={rows} name="" id="" className="p-2">
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={20}>20</option>

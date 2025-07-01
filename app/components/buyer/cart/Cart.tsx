@@ -80,11 +80,11 @@ const Cart = () => {
   }, [cartItems, selectedItems]);
   const totalSavings = useMemo(() => {
     return totalMRP - totalPrice;
-  }, [totalMRP, totalPrice]);
+  }, [cartItems, selectedItems]);
   const totalDiscount = useMemo(() => {
     if (totalMRP === 0) return 0;
     return Math.round((totalSavings / totalMRP) * 100);
-  }, [totalMRP, totalSavings]);
+  }, [cartItems, selectedItems]);
 
   const handleSelectAll = () => {
     const newCart = [...cart];
@@ -168,7 +168,7 @@ const Cart = () => {
     try {
       setIsCheckOutLoading(true);
       const { data } = await axios.post("/api/cart/checkout", { details });
-      // await initializeSDK(data.session);
+      await initializeSDK(data.session);
     } finally {
       setIsCheckOutLoading(false);
     }

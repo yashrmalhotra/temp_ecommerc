@@ -140,7 +140,7 @@ const ManageReturn = () => {
                 ))}
               </div>
             </div>
-            <Pagination page={page} setPage={setPage} totalPages={totalPages} setRows={setRows} />
+            <Pagination rows={rows} page={page} setPage={setPage} totalPages={totalPages} setRows={setRows} />
           </>
         )}
       </section>

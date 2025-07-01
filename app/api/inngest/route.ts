@@ -1,6 +1,13 @@
 import { inngest } from "@/utill/inngest/inngest";
 import { deleteItemToCartInDB, syncCartToDB, updateItemQtyInDB } from "@/utill/inngest/services/cart";
-import { addOrderToDB, createOrderWithCart, deleteCancelOrderInDB, paymemtConfirmInDB } from "@/utill/inngest/services/order";
+import {
+  addOrderToDB,
+  createOrderWithCart,
+  deleteCancelOrderInDB,
+  deleteMultiDropPaymentOrderInDb,
+  paymemtConfirmInDB,
+  updateOrderStatusInDB,
+} from "@/utill/inngest/services/order";
 import { cancelReturnInDB, createReturnInDB, updateRefundStatusInDB, updateReturnStatusInDB } from "@/utill/inngest/services/return";
 import { addReviewInDb } from "@/utill/inngest/services/review";
 import { syncViewsToDB, syncClicksToDB } from "@/utill/inngest/services/track-views-clicks";
@@ -13,14 +20,17 @@ export const { GET, POST, PUT } = serve({
     syncCartToDB,
     updateItemQtyInDB,
     deleteItemToCartInDB,
+
     addOrderToDB,
     addReviewInDb,
     deleteCancelOrderInDB,
     createOrderWithCart,
     paymemtConfirmInDB,
+    updateOrderStatusInDB,
     createReturnInDB,
     cancelReturnInDB,
     updateReturnStatusInDB,
     updateRefundStatusInDB,
+    deleteMultiDropPaymentOrderInDb,
   ],
 });

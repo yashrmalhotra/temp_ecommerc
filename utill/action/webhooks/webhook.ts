@@ -5,6 +5,7 @@ const cashFree = new Cashfree(CFEnvironment.SANDBOX, process.env.CASHFREE_APP_ID
 export const cashfreeVerify = async (signature: any, rawBody: any, timeStamp: any) => {
   const isVerified = cashFree.PGVerifyWebhookSignature(signature, rawBody, timeStamp);
   const webhookData = JSON.parse(rawBody);
+  console.log("webhook type", webhookData.type);
   if (!isVerified) {
     console.log("Signature is not valid");
     throw new Error("Signature is not valid");
@@ -25,19 +26,11 @@ export const cashfreeVerify = async (signature: any, rawBody: any, timeStamp: an
       throw new Error(error.message);
     }
   }
-};
-export const cashfreeVerifyForCart = async (signature: any, rawBody: any, timeStamp: any) => {
-  const isVerified = cashFree.PGVerifyWebhookSignature(signature, rawBody, timeStamp);
-  const webhookData = JSON.parse(rawBody);
-  if (!isVerified) {
-    console.log("Signature is not valid");
-    throw new Error("Signature is not valid");
-  }
-  if (webhookData.type === "PAYMENT_SUCCESS_WEBHOOK") {
+  if (webhookData.type === "PAYMENT_USER_DROPPED_WEBHOOK" || webhookData.type === "PAYMENT_FAILED_WEBHOOK") {
     try {
-      await inngest.send({ name: "cart-payment-confirm-in-db", data: { paymentId: webhookData.data.order.order_id } });
+      await inngest.send({ name: "delete-multi-order-drop-payment", data: { paymentId: webhookData.data.order.order_id } });
     } catch (error: any) {
-      console.log("error from cashfreefxn check pay", error);
+      console.log("error from cashfreefxn check cancel", error);
       throw new Error(error.message);
     }
   }

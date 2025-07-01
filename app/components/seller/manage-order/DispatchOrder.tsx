@@ -8,6 +8,7 @@ import Pagination from "../Pagination";
 import { SellerOrderProps } from "@/Types/type";
 import Link from "next/link";
 import ThreeDotLoader from "../../ThreeDotLoader";
+import { useSellerNotification } from "@/app/context/SellerNotificationProvider";
 
 const DispatchOrder: React.FC<SellerOrderProps> = ({ query, orders, setOrders, isLoading, setIsLoading }) => {
   const [page, setPage] = useState<number>(0);
@@ -18,6 +19,7 @@ const DispatchOrder: React.FC<SellerOrderProps> = ({ query, orders, setOrders, i
   const [sort, setSort] = useState<string>("");
   const [selectedOrder, setSelectedOrder] = useState<number>();
   const [dispatchLoading, setDispatchLoading] = useState<boolean>(false);
+  const { setOid } = useSellerNotification()!;
   const fetchOrders = async () => {
     try {
       setOrders([]);
@@ -36,6 +38,7 @@ const DispatchOrder: React.FC<SellerOrderProps> = ({ query, orders, setOrders, i
 
       setTotalPages(Math.ceil(totalOrders / rows));
       setOrders(data.orders.orders);
+      setOid([])
 
       if (totalOrders <= rows) {
         setPage(0);

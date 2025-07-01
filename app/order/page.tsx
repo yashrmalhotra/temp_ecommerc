@@ -6,6 +6,6 @@ const page = () => {
   return <Order />;
 };
 export const metadata: Metadata = {
-  title: "Ecommerce order",
+  title: "Order",
 };
 export default page;

@@ -14,6 +14,8 @@ const statusBg = {
   Shipped: "bg-blue-700",
   Delivered: "bg-green-300",
   Returned: "bg-red-300",
+  Refunded: "bg-red-500",
+  "Return Approved": "bg-red-400",
 };
 const ReadOnlyOrders: React.FC<SellerOrderProps & Status> = ({ query, orders, setOrders, isLoading, setIsLoading, status }) => {
   const [page, setPage] = useState<number>(0);
@@ -30,7 +32,7 @@ const ReadOnlyOrders: React.FC<SellerOrderProps & Status> = ({ query, orders, se
         return;
       }
       setIsLoading(true);
-      const { data } = await axios.get(`/api/seller/manageorder?uid=${userDetails?.uid}&page=${page}&rows=${rows}&status=${status}`);
+      const { data } = await axios.get(`/api/seller/manageorder?uid=${userDetails?.uid}&page=${page}&rows=${rows}&status=${status}&filter=${filter}&sort=${sort}`);
       const totalOrders = Number(data.orders.totalOrders);
 
       if (data?.orders?.orders.lenght > 0) {
@@ -52,7 +54,7 @@ const ReadOnlyOrders: React.FC<SellerOrderProps & Status> = ({ query, orders, se
   };
   useEffect(() => {
     fetchOrders();
-  }, [page, rows]);
+  }, [page, rows, sort, filter]);
 
   if (isLoading) {
     return <ProductSkeletonLoader />;
@@ -64,7 +66,7 @@ const ReadOnlyOrders: React.FC<SellerOrderProps & Status> = ({ query, orders, se
     <>
       {status === "Send" && (
         <FilterSortMenu
-          filterOptions={["Multi Quantity", "Shipped", "Delivered", "All"]}
+          filterOptions={["Multi Quantity", "Shipped", "Delivered", "Returned", "Return Approved", "Refunded", "All"]}
           sortOptions={[
             "Order date: Newest first",
             "Order date: Oldest first",
@@ -125,7 +127,7 @@ const ReadOnlyOrders: React.FC<SellerOrderProps & Status> = ({ query, orders, se
           )}
         </div>
       </div>
-      <Pagination page={page} setPage={setPage} setRows={setRows} totalPages={totalPages} />
+      <Pagination rows={rows} page={page} setPage={setPage} setRows={setRows} totalPages={totalPages} />
     </>
   );
 };

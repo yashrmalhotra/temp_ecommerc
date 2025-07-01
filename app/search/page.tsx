@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import ProductPage from "../components/buyer/productPage/ProductPage";
+import { Metadata } from "next";
 
 const page = () => {
   return (
@@ -7,6 +8,10 @@ const page = () => {
       <ProductPage />;
     </Suspense>
   );
+};
+
+export const metadata: Metadata = {
+  title: "Search",
 };
 
 export default page;

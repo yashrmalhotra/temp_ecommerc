@@ -181,7 +181,7 @@ const ManageInventory = () => {
               </div>
               <div className="flex items-center gap-3 ml-[2vw] mt-5">
                 <div>
-                  <select onChange={handleRowsChange} name="" id="" className="p-2">
+                  <select onChange={handleRowsChange} value={rows} name="" id="" className="p-2">
                     <option value={5}>5</option>
                     <option value={10}>10</option>
                     <option value={20}>20</option>

@@ -14,6 +14,6 @@ const page = () => {
   );
 };
 export const metadata: Metadata = {
-  title: "Ecommerce seller dashboard",
+  title: "Seller - Dashboard",
 };
 export default page;

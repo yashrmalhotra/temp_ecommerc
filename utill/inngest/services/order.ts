@@ -99,6 +99,30 @@ export const paymemtConfirmInDB = inngest.createFunction({ id: "payment-confirm"
     throw new Error(error.message);
   }
 });
+export const updateOrderStatusInDB = inngest.createFunction({ id: "update-status" }, { event: "update-order-status-in-db" }, async ({ event, step }) => {
+  const { oids } = event.data;
+  await connectToDataBase();
+  await step.run("Status Shipped", async () => {
+    console.log("oid status sleep shipped", oids);
+    try {
+      await Order.updateMany({ oid: { $in: oids } }, { $set: { status: "Shipped" } });
+    } catch (error: any) {
+      console.log("error", error);
+      throw new Error(error.message);
+    }
+  });
+
+  await step.sleep("deliver order test", "1m");
+  await step.run("Status Delivered", async () => {
+    try {
+      await Order.updateMany({ oid: { $in: oids } }, { $set: { status: "Delivered", deliveredAt: new Date() } });
+    } catch (error: any) {
+      console.log("error", error);
+      throw new Error(error.message);
+    }
+  });
+});
+
 export const createOrderWithCart = inngest.createFunction(
   {
     id: "create-order-with-cart",
@@ -120,7 +144,7 @@ export const createOrderWithCart = inngest.createFunction(
           }
           product.offer.stock -= item.qty;
           await product.save({ session });
-          const oid = getOrderId(item.soldBy, uid);
+          const oid = getOrderId(product.createdBy, uid);
           await Order.create({
             oid,
             uid,
@@ -137,22 +161,21 @@ export const createOrderWithCart = inngest.createFunction(
         }
       });
     } catch (error) {
+      console.log("error", error);
       throw new Error("error");
     }
   }
 );
-// export const updateBulkOrderStatusForPaymentConfirm = inngest.createFunction({ id: "bulk-payment-confirm" }, { event: "update-bulk-payment-confirm-in-db" }, async ({ event }) => {
-//   const { groupOrderId } = event.data;
-//   await connectToDataBase();
-//   try {
-//     const orders: any = await Order.find({ groupOrderId }).select("oid status soldBy");
-//     for (const item of orders) {
-//       item.status = "Ordered";
-//       sellerEvent.emit("order-created", { sellerId: item.soldBy, oid: item.oid });
-//     }
-//     await orders.save();
-//   } catch (error: any) {
-//     console.log("error", error);
-//     throw new Error(error.message);
-//   }
-// });
+
+export const deleteMultiDropPaymentOrderInDb = inngest.createFunction({ id: "delete-multi-order" }, { event: "delete-multi-order-drop-payment" }, async ({ event }) => {
+  const { paymentId } = event.data;
+  try {
+    const orders = await Order.find({ paymentId });
+    if (orders.length > 1) {
+      await Order.deleteMany({ paymentId });
+    }
+  } catch (error) {
+    console.log("error", error);
+    throw new Error("error");
+  }
+});

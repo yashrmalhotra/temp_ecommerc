@@ -15,6 +15,6 @@ const page = () => {
   );
 };
 export const metadata: Metadata = {
-  title: "Manage Inventory",
+  title: "Seller - Manage Inventory",
 };
 export default page;

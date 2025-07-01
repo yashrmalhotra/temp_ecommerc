@@ -54,7 +54,11 @@ export const getOrder = async (sellerId: string, query: string | null, rows: num
     facet.orders = orderStage;
   } else {
     if (status === "Send") {
-      condition.status = { $nin: ["Pending", "Ordered"] };
+      if (filter === "Delivered" || filter === "Shipped" || filter === "Returned" || filter === "Return Approved" || filter === "Refunded") {
+        condition.status = filter;
+      } else {
+        condition.status = { $nin: ["Pending", "Ordered"] };
+      }
     } else {
       condition.status = status;
     }

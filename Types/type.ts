@@ -605,6 +605,7 @@ export interface SellerOrderFilterSortProps {
 export interface SellerOrderPaginationProps {
   page: number;
   totalPages: number;
+  rows: number;
   setPage: React.Dispatch<SetStateAction<number>>;
   setRows: React.Dispatch<SetStateAction<number>>;
 }

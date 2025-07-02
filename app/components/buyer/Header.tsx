@@ -178,7 +178,7 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
               )}
             </div>
 
-            <button type="button" onClick={handleSearchClick} className="bg-purple-400 rounded-e-xl p-3">
+            <button type="button" onClick={handleSearchClick} className="bg-purple-400 active:bg-purple-500 rounded-e-xl p-3">
               <FaSearch />
             </button>
           </form>

@@ -18,9 +18,9 @@ import { GoAlertFill } from "react-icons/go";
 
 const Cart = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isQtyLoading, setIsQtyLoading] = useState<boolean>(false);
+  const [isQtyLoading, setIsQtyLoading] = useState<Record<string, boolean>>({});
   const [isCheckOutLoading, setIsCheckOutLoading] = useState<boolean>(false);
-  const [pid, setPid] = useState<string>("");
+  const [isRemovingLoading, setIsRemovingLoading] = useState<Record<string, boolean>>({});
   const dispatchCartAction = useAppDispatch();
   const [cart, setCart] = useState<any[]>([]);
   const { userDetails } = useUserDetails()!;
@@ -61,30 +61,30 @@ const Cart = () => {
 
   const handleQty = async (id: string, qty: number) => {
     try {
-      setIsQtyLoading(true);
+      setIsQtyLoading({ ...isQtyLoading, [id]: true });
       await axios.put("/api/cart", { data: [id, userDetails?.uid, qty] });
       dispatchCartAction(updateQty([id, qty]));
     } catch (error) {
       console.log(error);
     } finally {
-      setIsQtyLoading(false);
+      setIsQtyLoading({ ...isQtyLoading, [id]: false });
     }
   };
 
   const selectedItems = useMemo(() => cart.filter((item) => item.isSelected), [cart]);
   const totalPrice = useMemo(() => {
     return selectedItems.reduce((total: number, item: any) => total + item.pid.offer.price * (cartItems[item.pid._id] || 1), 0);
-  }, [cartItems, selectedItems]);
+  }, [cart, cartItems]);
   const totalMRP = useMemo(() => {
     return selectedItems.reduce((total: number, item: any) => total + item.pid.offer.mrp * (cartItems[item.pid._id] || 1), 0);
-  }, [cartItems, selectedItems]);
+  }, [cart, cartItems]);
   const totalSavings = useMemo(() => {
     return totalMRP - totalPrice;
-  }, [cartItems, selectedItems]);
+  }, [cart, cartItems]);
   const totalDiscount = useMemo(() => {
     if (totalMRP === 0) return 0;
     return Math.round((totalSavings / totalMRP) * 100);
-  }, [cartItems, selectedItems]);
+  }, [cart, cartItems]);
 
   const handleSelectAll = () => {
     const newCart = [...cart];
@@ -104,7 +104,7 @@ const Cart = () => {
   };
   const handleDelete = async (pid: string) => {
     try {
-      setPid(pid);
+      setIsRemovingLoading({ ...isRemovingLoading, [pid]: true });
       await axios.delete(`/api/cart-item`, {
         data: {
           uid: userDetails?.uid,
@@ -114,10 +114,11 @@ const Cart = () => {
       const shallowCart = [...cart];
       const newCart = shallowCart.filter((item) => item.pid._id !== pid);
       setCart(newCart);
+
       dispatchCartAction(deleteItem(pid));
     } catch (error) {
     } finally {
-      setPid("");
+      setIsRemovingLoading({ ...isRemovingLoading, [pid]: false });
     }
   };
 
@@ -255,15 +256,17 @@ const Cart = () => {
                             <div className="flex">
                               <button
                                 onClick={() => handleQty(item.pid._id, -1)}
-                                disabled={cartItems[item.pid._id] === 1 || isQtyLoading}
+                                disabled={cartItems[item.pid._id] === 1 || isQtyLoading[item.pid._id]}
                                 className="p-2 bg-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed active:bg-slate-400 rounded-sm"
                               >
                                 -
                               </button>
-                              <span className="bg-white p-2 flex">{isQtyLoading ? <Loader width="w-5" height="h-5" /> : <span>{cart ? cartItems[item.pid._id] : ""}</span>}</span>
+                              <span className="bg-white p-2 flex">
+                                {isQtyLoading[item.pid._id] ? <Loader width="w-5" height="h-5" /> : <span>{cart ? cartItems[item.pid._id] : ""}</span>}
+                              </span>
                               <button
                                 onClick={() => handleQty(item.pid._id, 1)}
-                                disabled={isQtyLoading}
+                                disabled={isQtyLoading[item.pid._id]}
                                 className="p-2 bg-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed active:bg-slate-200 rounded-sm"
                               >
                                 +
@@ -273,7 +276,7 @@ const Cart = () => {
                               onClick={() => handleDelete(item.pid._id)}
                               className="ml-1 flex justify-center w-32 h-7 hover:bg-red-500 active:bg-red-400 hover:text-white loader"
                             >
-                              {pid === item.pid._id ? <Loader width="w-5" height="h-5" /> : <span>Remove from cart</span>}
+                              {isRemovingLoading[item.pid._id] ? <Loader width="w-5" height="h-5" /> : <span>Remove from cart</span>}
                             </button>
                           </div>
                         )}

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import { IoIosMail } from "react-icons/io";
+import { FaBell } from "react-icons/fa6";
 import { FaGear } from "react-icons/fa6";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdOutlinePushPin } from "react-icons/md";
@@ -116,9 +116,9 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
           <div className="flex hover:text-sky-500 hover:underline cursor-pointer">
             <div className="text-white flex flex-col items-center">
               <Badge badgeContent={oid?.length} max={9} color="primary" anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
-                <IoIosMail size={20} />
+                <FaBell size={20} />
               </Badge>
-              <span>Message</span>
+              <span>Notifications</span>
             </div>
           </div>
           {/* 

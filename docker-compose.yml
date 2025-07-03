@@ -1,0 +1,67 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mart-ever
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - mongo-init # Ensure mongo-init completes before app starts
+  mongo:
+    image: mongo:4.4
+    container_name: mongo-image
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db # Persist MongoDB data
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"] # Start MongoDB as a replica set member
+  mongo-init: # Service to initialize the MongoDB replica set
+    image: mongo:4.4
+    container_name: mongo-init-image
+    depends_on:
+      - mongo # Ensures the main mongo container is running
+    command: >
+      bash -c "
+        # Wait until the mongo service is up and reachable using the 'mongo' shell
+        until mongo --host mongo --eval 'print(\"waited for connection\")' > /dev/null 2>&1; do
+          echo 'Waiting for mongo service to be ready...';
+          sleep 1;
+        done;
+        
+        echo 'Mongo service is up, checking replica set status...';
+        # Check if replica set is already initialized, if not, initialize it
+        # Use 'mongo' shell for rs.initiate command as 'mongosh' is not in mongo:4.4
+        mongo --host mongo --eval '
+          var status = rs.status();
+          if (status.ok === 0 || status.errmsg === \"no replset config has been received\") {
+            print(\"Initializing replica set rs0...\");
+            rs.initiate({
+              _id: \"rs0\",
+              members: [ { _id: 0, host: \"mongo:27017\" } ]
+            });
+          } else {
+            print(\"Replica set rs0 is already initialized.\");
+          }
+        ';
+        echo 'Mongo replica set initialization script finished.';
+      "
+  redis:
+    image: redis:7
+    container_name: redis-image
+    ports:
+      - 6379:6379 # Expose Redis port
+
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis-insight-image
+    ports:
+      - 8001:5540
+    depends_on:
+      - redis
+volumes:
+  mongo-data:

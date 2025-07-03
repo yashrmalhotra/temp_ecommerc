@@ -43,12 +43,13 @@ export const connectToDataBase = async () => {
   return cached.connection;
 };
 let redisClient: Redis;
-
+const redis_url = process.env.REDIS_URL!;
 if (!global.redis) {
-  redisClient = new Redis();
+  redisClient = new Redis(redis_url);
   global.redis = redisClient;
   redisClient.on("connect", () => console.log("redis connected successfully"));
 } else {
   redisClient = global.redis;
 }
+console.log("redis and mongodb url = ", redis_url, MONGODB_URI);
 export const client = redisClient;

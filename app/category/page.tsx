@@ -1,9 +1,13 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Category from "../components/buyer/category/Category";
 import { Metadata } from "next";
 
 const page = () => {
-  return <Category />;
+  return (
+    <Suspense>
+      <Category />;
+    </Suspense>
+  );
 };
 export const metadata: Metadata = {
   title: "Categoies",

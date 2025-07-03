@@ -1,13 +1,15 @@
 import ManagePayment from "@/app/components/seller/manage-payments/ManagePayment";
 import ProtectedSellerRoute from "@/app/components/seller/ProtectedSellerRoute";
 import { Metadata } from "next";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
   return (
-    <ProtectedSellerRoute>
-      <ManagePayment />
-    </ProtectedSellerRoute>
+    <Suspense>
+      <ProtectedSellerRoute>
+        <ManagePayment />
+      </ProtectedSellerRoute>
+    </Suspense>
   );
 };
 export const metadata: Metadata = {

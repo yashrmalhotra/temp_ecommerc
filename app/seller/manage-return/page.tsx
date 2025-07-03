@@ -1,13 +1,15 @@
 import ManageReturn from "@/app/components/seller/manage-return/ManageReturn";
 import ProtectedSellerRoute from "@/app/components/seller/ProtectedSellerRoute";
 import { Metadata } from "next";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
   return (
-    <ProtectedSellerRoute>
-      <ManageReturn />
-    </ProtectedSellerRoute>
+    <Suspense>
+      <ProtectedSellerRoute>
+        <ManageReturn />
+      </ProtectedSellerRoute>
+    </Suspense>
   );
 };
 export const metadata: Metadata = {

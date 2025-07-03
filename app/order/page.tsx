@@ -1,9 +1,13 @@
 import { Metadata } from "next";
-import React from "react";
+import React, { Suspense } from "react";
 import Order from "../components/buyer/order/Order";
 
 const page = () => {
-  return <Order />;
+  return (
+    <Suspense>
+      <Order />;
+    </Suspense>
+  );
 };
 export const metadata: Metadata = {
   title: "Order",

@@ -1,13 +1,15 @@
 import Orderdetail from "@/app/components/buyer/order/Orderdetail";
 import ProtectedBuyerRoute from "@/app/components/buyer/ProtectedBuyerRoute";
 import { Metadata } from "next";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
   return (
-    <ProtectedBuyerRoute>
-      <Orderdetail />
-    </ProtectedBuyerRoute>
+    <Suspense>
+      <ProtectedBuyerRoute>
+        <Orderdetail />
+      </ProtectedBuyerRoute>
+    </Suspense>
   );
 };
 

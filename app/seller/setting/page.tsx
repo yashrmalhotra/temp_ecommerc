@@ -1,3 +1,4 @@
+import ProtectedSellerRoute from "@/app/components/seller/ProtectedSellerRoute";
 import SellerAccount from "@/app/components/seller/sellerAccount/SellerAccount";
 import { Metadata } from "next";
 import React, { Suspense } from "react";
@@ -6,7 +7,9 @@ const page = () => {
   return (
     <>
       <Suspense>
-        <SellerAccount />
+        <ProtectedSellerRoute>
+          <SellerAccount />
+        </ProtectedSellerRoute>
       </Suspense>
     </>
   );

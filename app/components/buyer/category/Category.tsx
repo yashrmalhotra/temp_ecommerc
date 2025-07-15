@@ -19,7 +19,7 @@ const Category = () => {
   return (
     <>
       <Header />
-      <section className="flex mt-14 h-[calc(100vh-3.5rem)] ">
+      <section className="flex mt-14 mb-12 h-[calc(100vh-3.5rem)] ">
         <div className="basis-[10%] h-full bg-gray-100 border flex flex-col py-2">
           {Object.keys(categories).map((item, i) => (
             <button key={i} onClick={() => setCategory(item)} className={`${item === category ? "border-l-2 border-blue-300 bg-white" : "border border-slate-200"} px-1 `}>

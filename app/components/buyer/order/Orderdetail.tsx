@@ -146,7 +146,7 @@ const Orderdetail = () => {
         <ThreeDotLoader />
       ) : order ? (
         <>
-          <section className="mt-20">
+          <section className="mt-20 mb-20">
             {payNowLoading && <ThreeDotLoader />}
             <div className="w-[80%] flex flex-col justify-center md:flex-row gap-3 mx-auto mt-4">
               <div className="border rounded p-5">

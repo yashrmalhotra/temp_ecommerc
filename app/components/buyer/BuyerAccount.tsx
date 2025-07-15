@@ -78,7 +78,7 @@ const BuyerAccount = () => {
   return (
     <>
       <Header />
-      <section className="mt-14">
+      <section className="mt-14 mb-20">
         <Confirm deleteConfirmOpen={deleteConfirmOpen} setDeleteConfirmOpen={setDeleteConfirmOpen} address={address!} email={context?.userDetails?.email!} />
 
         <div className="p-2 mt-2 flex flex-col md:container md:mx-auto md:p-0">
@@ -141,9 +141,9 @@ const BuyerAccount = () => {
             </div>
           </div>
         </div>
-        <MobileNav />
         {formVisible && <AddressForm setFormVisible={setFormVisible} email={context?.userDetails?.email || ""} address={address as Address} />}
       </section>
+      <MobileNav />
     </>
   );
 };

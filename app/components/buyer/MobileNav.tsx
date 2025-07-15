@@ -2,7 +2,7 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { FaHome, FaShoppingCart, FaUser } from "react-icons/fa";
+import { FaHome, FaShoppingCart, FaUser, FaUserCircle } from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
 import { useAppSelector } from "@/app/redux/hooks";
 import { BiSolidCategory } from "react-icons/bi";
@@ -39,10 +39,10 @@ const MobileNav = () => {
           </Link>
         </li>
 
-        <li className={`${isActive("/acc/setting") ? "text-blue-500" : "text-white"} hover:underline`}>
-          <Link href="/acc/setting" className="flex flex-col items-center">
-            <IoIosSettings size={25} />
-            <div>Settings</div>
+        <li className={` ${isActive("/acc") ? "text-blue-500" : "text-white"} hover:underline`}>
+          <Link href="/acc" className="flex flex-col items-center">
+            <FaUserCircle size={25} />
+            <div>My Account</div>
           </Link>
         </li>
       </ul>

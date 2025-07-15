@@ -65,7 +65,7 @@ export const getProduct = async (uid: string, rows: number, page: number, filter
     filter.status = filterStatus;
   }
   await connectToDataBase();
-  console.log(uid, filter);
+
   const skip = rows * page;
   const limit = rows;
 
@@ -115,8 +115,7 @@ export const getProduct = async (uid: string, rows: number, page: number, filter
 
 export const editProduct = async (data: any) => {
   await connectToDataBase();
-  console.log(data, "data");
-  console.log("data", data.images);
+
   if ((data.offer.price === 0 || data.offer.mrp === 0) && data.status === "submit") {
     data.status = "inactive";
   } else if (data.offer.stock === 0 && data.status === "submit") {

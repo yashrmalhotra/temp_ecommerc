@@ -134,7 +134,7 @@ const ProductResult: React.FC<{ products: ProductInfo[]; totalPages: number }> =
               ))}
             </div>
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center mb-12">
             <SlidingWindowPagination totalPages={Math.ceil(totalPages / 10)} />
           </div>
 

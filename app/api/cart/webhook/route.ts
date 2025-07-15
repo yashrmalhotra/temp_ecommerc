@@ -1,4 +1,3 @@
-import { cashfreeVerifyForCart } from "@/utill/action/webhooks/webhook";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -11,7 +10,6 @@ export async function POST(req: Request) {
       console.log("verify missing attribute");
       return NextResponse.json({ error: "Missing webhook header" }, { status: 400 });
     }
-    await cashfreeVerifyForCart(signature, rawBody, timeStamp);
 
     return NextResponse.json({ success: true });
   } catch (error) {

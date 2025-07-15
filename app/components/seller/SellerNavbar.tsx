@@ -108,7 +108,9 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
           </button>
           <Link href="/seller/dashboard" className="text-center justify-center ">
             <div className=" hover:underline font-bold px-2 border-r-2 text-center flex justify-center text-white">Logo</div>
-            <div className="text-[7px] md:text-base hover:underline font-bold px-2 border-r-2 text-white">Seller Dahboard</div>
+            <div className="text-[7px] md:text-base hover:underline font-bold px-2 border-r-2 text-white">
+              {context?.userDetails?.sellerShopDisplayName ? <span>{context?.userDetails?.sellerShopDisplayName}</span> : <span>Seller Dahboard</span>}
+            </div>
           </Link>
         </div>
 

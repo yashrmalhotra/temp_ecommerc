@@ -206,7 +206,7 @@ const Cart = () => {
         </div>
       ) : (
         <>
-          <section className="mt-14 bg-gray-200 justify-center flex flex-col md:flex-row min-h-[calc(100vh-3.5rem)] md:gap-8">
+          <section className="mt-14 mb-20 bg-gray-200 justify-center flex flex-col md:flex-row min-h-[calc(100vh-3.5rem)] md:gap-8">
             <div className="w-[95%] mx-auto md:mx-0 md:w-[55%] bg-white px-2">
               {Object.keys(cartItems).length === 0 ? (
                 <div className="flex w-full h-full items-center font-bold justify-center">No items</div>

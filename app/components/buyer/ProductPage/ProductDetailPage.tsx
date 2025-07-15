@@ -13,8 +13,9 @@ import ImageCarousel from "./ImageCarousel";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { useUserDetails } from "@/app/context/UserDetailsProvider";
 import { addToCart } from "@/app/redux/cartSlice";
+import MobileNav from "../MobileNav";
 const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
-  const [product, setProduct] = useState<ProductInfo & { soldBy: string }>();
+  const [product, setProduct] = useState<ProductInfo & { soldBy: string; seller: { sellerShopDisplayName: string } }>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<number>(1);
   const theme = useTheme();
@@ -46,6 +47,8 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
       }
     })();
   }, []);
+
+  console.log("Prodct = ", product);
 
   const handleAddToCart = async () => {
     const redirectTo = `${pathName}?${searchParms.toString()}`;
@@ -93,7 +96,7 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
         <>
           {isLoading && <ThreeDotLoader />}
           <Header />
-          <section className="mt-[4.5rem]">
+          <section className="mt-[4.5rem] mb-20">
             <div className="container mx-auto flex flex-col md:flex-row gap-10 items-start">
               <ImageCarousel isDesktopView={isDesktop} images={product.images} />
               <div className="w-full box-border px-2 md:mx-0 md:w-[48%]">
@@ -145,6 +148,7 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
                 ) : (
                   <div className="font-bold text-red-500">Currently Unavailable</div>
                 )}
+
                 <div className="mt-20 text-left">
                   <h1 className="text-xl font-bold ">Key Features</h1>
                   <ul className="list-disc ml-5 space-y-2">
@@ -162,6 +166,10 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
 
             <div className="mt-20 container mx-auto box-border px-2 md:px-0">
               <h1 className="text-xl font-bold">Addition Info</h1>
+              <div className="grid grid-cols-2 border border-gray-400">
+                <div className="bg-gray-200 p-1 border border-b-0">Sold by</div>
+                <div className="p-1 border border-b-0">{product.seller.sellerShopDisplayName.charAt(0).toUpperCase() + product.seller.sellerShopDisplayName.slice(1)}</div>
+              </div>
               <div className="grid grid-cols-2 border border-gray-400">
                 <div className="bg-gray-200 p-1 border border-b-0">Manufacturer</div>
                 <div className="p-1 border border-b-0">{product.basicInfo.manufacturer.charAt(0).toUpperCase() + product.basicInfo.manufacturer.slice(1)}</div>
@@ -216,6 +224,7 @@ const ProductDetailPage: React.FC<{ pid: string }> = ({ pid }) => {
               </div>
             )}
           </section>
+          <MobileNav />
         </>
       )}
     </>

@@ -1,5 +1,6 @@
-FROM node:20-alpine
+FROM node:20
 WORKDIR /app
+ENV NODE_OPTIONS=--openssl-legacy-provider
 COPY package*.json ./
 RUN npm install
 COPY . .

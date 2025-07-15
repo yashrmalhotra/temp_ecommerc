@@ -203,6 +203,15 @@ export const getProduct = async (pid: string) => {
       },
     },
     {
+      $lookup: {
+        from: "users",
+        localField: "createdBy",
+        foreignField: "uid",
+        as: "seller",
+      },
+    },
+    { $unwind: "$seller" },
+    {
       $project: {
         pid: 1,
         createdBy: 1,
@@ -217,6 +226,7 @@ export const getProduct = async (pid: string) => {
         "reviews.name": 1,
         "reviews.rating": 1,
         "reviews.review": 1,
+        "seller.sellerShopDisplayName": 1,
       },
     },
   ]);

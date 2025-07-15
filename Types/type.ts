@@ -622,7 +622,7 @@ export const SellerBankAccountZodSchema = z.object({
   accountType: z.enum(["saving", "current"]),
   accountHolderName: z.string().min(1, "A/C holder name is required"),
   accountNumber: z.string().min(1, "Please enter account number").regex(/^\d+$/, { message: "Please enter valid account rumber" }),
-  ifsc: z.string().regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, { message: "Please enter valid IFSC code" }),
+  ifsc: z.string().regex(/^[A-Z]{4}[A-Z0-9]{6}$/, { message: "Please enter valid IFSC code" }),
 });
 export type SellerBankAccountSchema = z.infer<typeof SellerBankAccountZodSchema>;
 export interface SellerBankAccountSchemaProps {

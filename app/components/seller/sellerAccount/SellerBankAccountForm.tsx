@@ -68,7 +68,7 @@ const SellerBankAccountForm: React.FC<SellerFormProps & SellerBankAccountSchemaP
             </div>
             <InputField labelText="Account Holder" mendatory="*" placeholder="eg: John" register={register("accountHolderName")} error={errors.accountHolderName?.message} />
             <InputField labelText="Account number" mendatory="*" placeholder="eg: John" register={register("accountNumber")} error={errors.accountNumber?.message} />
-            <InputField labelText="Account Holder" placeholder="eg: John" register={register("ifsc")} error={errors.ifsc?.message} />
+            <InputField labelText="IFSC" placeholder="eg: XYZA10001" register={register("ifsc")} error={errors.ifsc?.message} />
             <DialogActions>
               <Button onClick={() => handleSubmit(onSubmit)()} disableRipple autoFocus sx={{ bgcolor: "#1d4ed8", color: "white", "&:active": { bgcolor: "#3b82f6" } }}>
                 Submit

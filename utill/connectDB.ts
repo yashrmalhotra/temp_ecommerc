@@ -51,5 +51,5 @@ if (!global.redis) {
 } else {
   redisClient = global.redis;
 }
-console.log("redis and mongodb url = ", redis_url, MONGODB_URI);
+
 export const client = redisClient;

@@ -8,7 +8,7 @@ const BannerSlider: React.FC = () => {
     { url: "BIG SALE.jpg", id: 0 },
     { url: "ecommerce.jpg", id: 1 },
     { url: "Headphone.jpg", id: 2 },
-    { url: "Laptop.jpeg", id: 3 },
+    { url: "laptop.jpeg", id: 3 },
     { url: "watch.jpeg", id: 4 },
   ]);
   const [index, setIndex] = useState<number>(1);

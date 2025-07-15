@@ -12,6 +12,6 @@ const page = () => {
   );
 };
 export const metadata: Metadata = {
-  title: "Ecommerce - Home",
+  title: "GreatMart - Home",
 };
 export default page;

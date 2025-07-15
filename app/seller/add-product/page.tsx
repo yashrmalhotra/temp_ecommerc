@@ -15,5 +15,5 @@ const page = () => {
 
 export default page;
 export const metadata: Metadata = {
-  title: "Add Product",
+  title: "GreatMart Seller: Add Product",
 };

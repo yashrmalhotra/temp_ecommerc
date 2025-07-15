@@ -130,7 +130,9 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
     <>
       <header className="w-full px-3 bg-blue-300  border-2 flex fixed top-0 z-50 h-14 md:justify-around items-center box-border">
         <Link href="/" className="hover:underline">
-          <div className="font-bold">Brand Name</div>
+          <div className="font-bold">
+            <img src="greatmart.png" alt="" width={100} height={100} />
+          </div>
         </Link>
         <Link href="/category" className="hover:underline hidden md:inline">
           <div className="font-bold">Category</div>

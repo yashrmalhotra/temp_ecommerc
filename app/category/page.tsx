@@ -10,6 +10,6 @@ const page = () => {
   );
 };
 export const metadata: Metadata = {
-  title: "Categoies",
+  title: "GreatMart: Categoies",
 };
 export default page;

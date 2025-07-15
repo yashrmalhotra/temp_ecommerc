@@ -13,6 +13,6 @@ const page = () => {
   );
 };
 export const metadata: Metadata = {
-  title: "Seller Manage Returns",
+  title: "GreatMart Seller: Manage Returns",
 };
 export default page;

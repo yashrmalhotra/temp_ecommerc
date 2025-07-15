@@ -12,7 +12,7 @@ const page = () => {
 };
 
 export const metadata: Metadata = {
-  title: "Cart",
+  title: "GreatMart: Cart",
 };
 
 export default page;

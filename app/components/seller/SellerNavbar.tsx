@@ -98,7 +98,7 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
   return (
     <>
       {!context?.userDetails?.isVerified && <NotVerifiedAlert path="seller" />}
-      <nav id="seller_nav" className={`bg-cyan-700 w-full fixed z-10 top-0 flex justify-between items-center px-2 py-1 h-[50px] box-border ${additionalStyle}`}>
+      <nav id="seller_nav" className={`bg-cyan-500 w-full fixed z-10 top-0 flex justify-between items-center px-2 py-1 h-[50px] box-border ${additionalStyle}`}>
         <div className="flex items-center relative">
           <button ref={menuRefButton} onClick={handleMenuVisible} className=" border-r-2 px-2 text-white">
             <div className="flex justify-center">
@@ -106,8 +106,10 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
             </div>
             <div>Menu</div>
           </button>
-          <Link href="/seller/dashboard" className="text-center justify-center ">
-            <div className=" hover:underline font-bold px-2 border-r-2 text-center flex justify-center text-white">Logo</div>
+          <Link href="/seller/dashboard" className="text-center">
+            <div className=" hover:underline font-bold px-2 border-r-2 text-center flex justify-center items-center h-full text-white">
+              <img src="/greatmart.png" alt="" width={100} height={100} className="mt-4" />
+            </div>
             <div className="text-[7px] md:text-base hover:underline font-bold px-2 border-r-2 text-white">
               {context?.userDetails?.sellerShopDisplayName ? <span>{context?.userDetails?.sellerShopDisplayName}</span> : <span>Seller Dahboard</span>}
             </div>
@@ -143,7 +145,7 @@ const SellerNavbar: React.FC<{ additionalStyle?: string }> = ({ additionalStyle 
         </div>
       </nav>
 
-      <div className={`border-t-2 bg-cyan-700 z-40 text-white px-5 fixed top-[50px] flex gap-5 w-full h-[35px] box-border py-1 ${additionalStyle}`}>
+      <div className={`border-t-2 bg-cyan-500 z-40 text-white px-5 fixed top-[50px] flex gap-5 w-full h-[35px] box-border py-1 ${additionalStyle}`}>
         {pinedLink.length > 0 &&
           pinedLink.map((item: PinedLinkType) => (
             <Link key={item.url} href={item.url} className="font-bold hover:underline">

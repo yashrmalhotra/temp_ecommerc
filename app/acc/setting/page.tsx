@@ -15,7 +15,7 @@ const page = () => {
   );
 };
 export const metadata: Metadata = {
-  title: "Settings",
+  title: "GreatMart: Settings",
 };
 
 export default page;

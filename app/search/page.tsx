@@ -11,7 +11,7 @@ const page = () => {
 };
 
 export const metadata: Metadata = {
-  title: "Search",
+  title: "GreatMart: Search",
 };
 
 export default page;

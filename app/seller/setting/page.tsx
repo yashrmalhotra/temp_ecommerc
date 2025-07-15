@@ -15,6 +15,6 @@ const page = () => {
   );
 };
 export const metadata: Metadata = {
-  title: "seller account settings",
+  title: "GreatMart Seller: Account Settings",
 };
 export default page;

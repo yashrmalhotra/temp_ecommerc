@@ -13,6 +13,6 @@ const page = () => {
   );
 };
 export const metadata: Metadata = {
-  title: "Seller - Manage Payment",
+  title: "GreatMart Seller: Manage Payment",
 };
 export default page;

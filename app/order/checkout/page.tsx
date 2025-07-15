@@ -13,6 +13,6 @@ const page = () => {
   );
 };
 export const metadata: Metadata = {
-  title: "Checkout",
+  title: "GreatMart: Checkout",
 };
 export default page;

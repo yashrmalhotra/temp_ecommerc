@@ -13,6 +13,6 @@ const page: React.FC<{ params: { pid: string } }> = ({ params }) => {
   );
 };
 export const metadata: Metadata = {
-  title: "Product Detail page",
+  title: "GreatMart: Product Detail page",
 };
 export default page;

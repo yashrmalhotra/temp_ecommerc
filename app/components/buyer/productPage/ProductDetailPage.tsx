@@ -8,7 +8,7 @@ import StarRatings from "../StarRatings";
 import Link from "next/link";
 import { ProductInfo } from "@/Types/type";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useTheme, useMediaQuery, dialogClasses } from "@mui/material";
+import { useTheme, useMediaQuery } from "@mui/material";
 import ImageCarousel from "./ImageCarousel";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { useUserDetails } from "@/app/context/UserDetailsProvider";

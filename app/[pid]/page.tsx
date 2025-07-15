@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import ProductDetailPage from "@/app/components/buyer/productPage/ProductDetailPage";
+import ProductDetailPage from "../components/buyer/productPage/ProductDetailPage";
 import { Metadata } from "next";
 
 const page: React.FC<{ params: { pid: string } }> = ({ params }) => {

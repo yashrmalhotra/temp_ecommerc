@@ -163,7 +163,7 @@ export const retryPayment = async (oid: string) => {
   try {
     const session = await client.get(`orderpay:${oid}`);
     if (session) {
-      console.log("redis key pay", session);
+    
       return session;
     }
     const order = await Order.findOne({ oid }).select("paymentSession");

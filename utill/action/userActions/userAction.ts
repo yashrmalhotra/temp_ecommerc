@@ -8,7 +8,7 @@ import { EventEmitter } from "stream";
 import { getUserId } from "@/utill/utillityFunctions";
 export const checkExistingUser = async (email: string, role?: string): Promise<void | string> => {
   await connectToDataBase();
-  console.log(role, "role ");
+  
   const user = await User.findOne({ email }).select("email role");
 
   if (user) {
@@ -65,7 +65,7 @@ const transPorter = nodemailer.createTransport({
 const otpEmitter = new EventEmitter();
 
 otpEmitter.on("otp:generated", async (email: string, OTP: number) => {
-  console.log("email emit");
+  
 
   const cooldown = await client.get(`cooldown:${email}`);
   if (!cooldown) {
@@ -120,20 +120,20 @@ export const addBuyerAddress = async (email: string, buyerAddress: Address) => {
   await connectToDataBase();
   try {
     const user = await User.findOne({ email });
-    console.log(user);
+
     if (!user.buyerAddresses) {
       user.buyerAddresses = [];
     }
 
     const isAddressExist = user.buyerAddresses.some((val: Address) => val.address === buyerAddress.address);
-    console.log(isAddressExist, "iae");
+
     if (isAddressExist) {
       throw new Error("Address is already save");
     }
     if (user.buyerAddresses.length === 0) {
       buyerAddress = { ...buyerAddress, default: true };
     }
-    console.log(buyerAddress, "buyeraddress");
+
     user.buyerAddresses.push(buyerAddress);
     await user.save();
   } catch (error: any) {

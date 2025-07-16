@@ -41,7 +41,7 @@ const BuyerAccount = () => {
     input.click();
   };
   const submit = (data: any) => {
-    console.log(data);
+    
     setNameEdit(false);
   };
   const handleEditProfile = (key: string) => {

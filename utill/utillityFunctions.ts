@@ -72,7 +72,7 @@ export const getProductId = (cat: catKey, subcat: subcatKey) => {
   const subcatCode = subCategoryCodes[subcat];
   const id = intFormat(pid.next(), "dec");
   const idToString = id.toString().slice(4, 11);
-  console.log(idToString, "idts");
+  
   return catCode + subcatCode + idToString;
 };
 

@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({ setProducts, setBrands, setTotalPages, 
   useEffect(() => {
     if (transcript === "") return;
     setKeyword(transcript);
-    console.log(transcript);
+
   }, [transcript]);
   useEffect(() => {
     const query = params.get("q");

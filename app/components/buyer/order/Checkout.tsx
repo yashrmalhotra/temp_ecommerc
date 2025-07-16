@@ -31,7 +31,6 @@ const Checkout = () => {
     }
   }, [userDetails]);
   const selectAddress = (address: string, city: string, state: string, pincode: string) => {
-    console.log("address", address);
     setAddress({ address, city, state, pincode });
   };
 

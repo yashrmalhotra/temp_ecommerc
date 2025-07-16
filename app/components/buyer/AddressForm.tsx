@@ -62,7 +62,6 @@ const AddressForm: React.FC<AddressFormProps> = ({ setFormVisible, email, addres
       handleSubmit(submit)();
     }
   };
-  console.log(address);
   return (
     <>
       {isLoading && <ThreeDotLoader />}

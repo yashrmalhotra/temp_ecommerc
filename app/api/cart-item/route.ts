@@ -15,7 +15,7 @@ export async function GET(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const { uid, pid } = await req.json();
-    console.log("data", uid, pid);
+    
     await deleteItemToCart(uid, pid);
     return NextResponse.json({ success: true });
   } catch (error) {

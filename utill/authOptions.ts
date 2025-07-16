@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
             existingUser.role.push("seller");
           }
           await existingUser.save();
-          console.log("existingUser", existingUser);
+
           return true;
         } else if (!existingUser) {
           await User.create({

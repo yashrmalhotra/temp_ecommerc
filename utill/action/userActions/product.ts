@@ -238,10 +238,10 @@ export const updateProductViews = async (pids: string[], viewedBy: string) => {
     const key = `viewed-set:${viewedBy}`;
     const isAdded = await client.sadd(key, ...pids);
     if (isAdded === 0) {
-      console.log("isaddedd running");
+      
       return;
     }
-    console.log("new view to list running");
+  
     await client.expire(key, 3600);
     await inngest.send({
       name: "product-viewed",
@@ -259,10 +259,10 @@ export const updateProductClicks = async (pid: string, clickedBy: string, clicke
 
   try {
     if (isAdded === 0) {
-      console.log("duplicate found");
+      
       return;
     }
-    console.log("new click to list running");
+    
 
     client.expire(key, 3600);
     await inngest.send({

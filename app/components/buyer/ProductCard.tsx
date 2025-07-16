@@ -73,7 +73,7 @@ const ProductCard: React.FC<BuyerProductCard> = ({ title, mrp, price, imageUrl, 
               &nbsp;
             </div>
           </div>
-          <div className={` ${layout === "column" ? "w-full" : "w-full md:w-1/4"}`}>
+          <div className={` ${layout === "column" ? "w-full" : "w-full md:w-[30%]"}`}>
             {isLoading ? (
               <div className="bg-orange-300 w-full h-7 flex justify-center rounded-md ">
                 <Loader width="w-5" height="h-5" />

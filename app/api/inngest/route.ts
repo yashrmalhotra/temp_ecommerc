@@ -20,7 +20,6 @@ export const { GET, POST, PUT } = serve({
     syncCartToDB,
     updateItemQtyInDB,
     deleteItemToCartInDB,
-
     addOrderToDB,
     addReviewInDb,
     deleteCancelOrderInDB,

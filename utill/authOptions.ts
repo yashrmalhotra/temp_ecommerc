@@ -69,28 +69,30 @@ export const authOptions: NextAuthOptions = {
       }
 
       await connectToDataBase();
-      const existingUser = await User.findOne({ email: user.email });
-      if (existingUser && !existingUser.isVerified) {
-        existingUser.isVerified = true;
-      }
-      if (existingUser && !existingUser.googleId) {
-        existingUser.googleId = account.providerAccountId;
-        if (loginType?.value === "buyer" && !existingUser.role.includes("buyer")) {
-          existingUser.role.push("buyer");
-        } else if (loginType?.value === "seller" && !existingUser.role.includes("seller")) {
-          existingUser.role.push("seller");
+      if (account.provider === "google") {
+        const existingUser = await User.findOne({ email: user.email });
+        if (existingUser && !existingUser.isVerified) {
+          existingUser.isVerified = true;
         }
-        await existingUser.save();
-        console.log("existingUser", existingUser);
-        return true;
-      } else if (!existingUser) {
-        await User.create({
-          email: user.email,
-          name: user.name,
-          role: [loginType?.value],
-          isVerified: true,
-          uid: getUserId(user.email),
-        });
+        if (existingUser && !existingUser.googleId) {
+          existingUser.googleId = account.providerAccountId;
+          if (loginType?.value === "buyer" && !existingUser.role.includes("buyer")) {
+            existingUser.role.push("buyer");
+          } else if (loginType?.value === "seller" && !existingUser.role.includes("seller")) {
+            existingUser.role.push("seller");
+          }
+          await existingUser.save();
+          console.log("existingUser", existingUser);
+          return true;
+        } else if (!existingUser) {
+          await User.create({
+            email: user.email,
+            name: user.name,
+            role: [loginType?.value],
+            isVerified: true,
+            uid: getUserId(user.email),
+          });
+        }
       }
       return true;
     },

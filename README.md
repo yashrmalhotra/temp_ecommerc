@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛍️ Great Mart – Fullstack E-Commerce App
 
-## Getting Started
+[🌐 Live Site](https://greatmart.vercel.app)
 
-First, run the development server:
+Great Mart is a feature-rich, scalable fullstack e-commerce platform built with cutting-edge tools like **Next.js App Router**, **MongoDB**, **Redis**, **Docker**, **Cashfree** (for payments), and **Inngest** (for background job queues and events). Inspired by platforms like Amazon and Flipkart, it supports multi-item checkout, real-time notifications, background order processing, and more.
+
+---
+
+## 🚀 Tech Stack
+
+- **Frontend:** Next.js 14 (App Router), React, Tailwind CSS
+- **Backend:** Next.js API routes, MongoDB, Redis, Inngest, Cashfree PG
+- **Queue/Event Processing:** Inngest (with Redis pub/sub)
+- **Payments:** Cashfree (UPI, Cards, Netbanking)
+- **DevOps:** Docker, Docker Compose, Vercel
+- **Others:** Redis Insight (local), TypeScript, Mongoose
+
+---
+
+## 📸 Features
+
+✅ User Authentication with NextAuth  
+✅ Product listing and search  
+✅ Product detail page with reviews  
+✅ Add to cart & multi-item checkout  
+✅ Cashfree payment gateway integration  
+✅ Saved addresses and Razorpay/Cashfree tokens  
+✅ Background order processing with Inngest  
+✅ Real-time seller notifications via SSE  
+✅ Admin/seller dashboards  
+✅ Responsive & mobile-first design
+
+---
+
+## 📁 Folder Structure
+
+ecommerce/
+├── app/ # Next.js App Router pages and API routes
+├── components/ # UI components (product cards, navbars, etc.)
+├── inngest/ # Inngest server and background functions
+├── models/ # MongoDB/Mongoose schemas
+├── public/ # Static assets like images, favicon
+├── styles/ # Tailwind/global CSS
+├── utill/ # Utility functions (connectDB, Redis, SSE handlers, etc.)
+├── Types/ # TypeScript types and interfaces
+├── .env.local # Environment variables for development
+├── docker-compose.yml # Docker Compose for local dev
+├── Dockerfile # Docker container
+└── README.md
+
+## 🔐 Environment Variables
+
+> Create a `.env.local` in your root directory.
+
+```env
+####################################
+# Database & Auth
+####################################
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/ecommerce
+NEXTAUTH_SECRET=your-secret-key
+NEXTAUTH_URL=http://localhost:3000
+
+####################################
+# Redis (Aiven or Docker)
+####################################
+REDIS_URL=rediss://default:<password>@<host>:<port>
+# For local Redis (Docker):
+# REDIS_URL=redis://localhost:6379
+
+####################################
+# Cashfree Payment Gateway
+####################################
+CASHFREE_APP_ID=your_cashfree_app_id
+CASHFREE_SECRET_KEY=your_cashfree_secret
+CASHFREE_ENV=TEST
+
+####################################
+# Inngest
+####################################
+INNGEST_BASE_URL=http://inngest-dev:8288/api/inngest
+INNGEST_EVENT_KEY=your_event_key_from_inngest
+INNGEST_SIGNING_KEY=
+INNGEST_DEV=1
 
 ```
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

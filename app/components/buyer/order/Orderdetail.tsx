@@ -167,14 +167,11 @@ const Orderdetail = () => {
                   </Link>
                 </div>
                 <div className="flex flex-col md:flex-row gap-5 flex-wrap">
-                  {order.status === "Delivered" ||
-                    order.status === "Returned" ||
-                    order.status === "Return Approved" ||
-                    (order.status === "Refunded" && (
-                      <button onClick={() => setOpen(true)} className="bg-blue-300 active:bg-blue-400 rounded-xl px-5 py-2 text-white font-bold">
-                        Write a review
-                      </button>
-                    ))}
+                  {(order.status === "Delivered" || order.status === "Returned" || order.status === "Return Approved" || order.status === "Refunded") && (
+                    <button onClick={() => setOpen(true)} className="bg-blue-300 active:bg-blue-400 rounded-xl px-5 py-2 text-white font-bold">
+                      Write a review
+                    </button>
+                  )}
                   <div className="border rounded-xl px-5 py-2">Order id:{order.oid}</div>
                   <div className="border rounded-xl px-5 py-2">Ordered on:{new Date(order.createdAt).toLocaleDateString("en-GB")}</div>
                   {order.status === "Delivered" && !isSevenDayOlder() && (

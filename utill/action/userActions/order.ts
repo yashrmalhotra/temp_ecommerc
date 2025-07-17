@@ -96,7 +96,7 @@ const getPaymentSession = async (order_amount: number, customer_id: string, cust
       customer_phone: "+91999999991",
     },
     order_meta: {
-      return_url: `http://localhost:3000/order`,
+      return_url: `https://greatmart.vercel.app/order`,
     },
     order_note: "Test order",
   };
@@ -163,7 +163,6 @@ export const retryPayment = async (oid: string) => {
   try {
     const session = await client.get(`orderpay:${oid}`);
     if (session) {
-    
       return session;
     }
     const order = await Order.findOne({ oid }).select("paymentSession");

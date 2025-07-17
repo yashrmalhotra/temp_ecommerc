@@ -10,8 +10,8 @@ Great Mart is a feature-rich, scalable fullstack e-commerce platform built with 
 
 - **Frontend:** Next.js 14 (App Router), React, Tailwind CSS
 - **Backend:** Next.js API routes, MongoDB, Redis, Inngest, Cashfree PG
-- **Queue/Event Processing:** Inngest (with Redis pub/sub)
-- **Payments:** Cashfree (UPI, Cards, Netbanking)
+- **Queue/Event Processing:** Inngest 
+- **Payments:** Cashfree (Netbanking)
 - **DevOps:** Docker, Docker Compose, Vercel
 - **Others:** Redis Insight (local), TypeScript, Mongoose
 
@@ -56,7 +56,7 @@ ecommerce/
 ####################################
 # Database & Auth
 ####################################
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/ecommerce
+MONGO_URI=mongodb://mongo:27017/Ecommerce?replicaSet=rs0
 NEXTAUTH_SECRET=your-secret-key
 NEXTAUTH_URL=http://localhost:3000
 
@@ -73,6 +73,19 @@ REDIS_URL=rediss://default:<password>@<host>:<port>
 CASHFREE_APP_ID=your_cashfree_app_id
 CASHFREE_SECRET_KEY=your_cashfree_secret
 CASHFREE_ENV=TEST
+
+####################################
+# Google OAuth
+####################################
+GOOGLE_CLIENT_ID=google_client_id
+GOOGLE_CLIENT_SECRET=google_client_secret
+
+####################################
+# Imagekit.io
+####################################
+IMAGEKITIO_PUBLIC_KEY=public_secret
+IMAGEKITIO_PRIVATE_KEY=private_secret
+IMAGEKITIO_URL_ENDPOINT="https://ik.imagekit.io/your_imagekit_id/id"
 
 ####################################
 # Inngest

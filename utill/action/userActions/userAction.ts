@@ -8,7 +8,7 @@ import { EventEmitter } from "stream";
 import { getUserId } from "@/utill/utillityFunctions";
 export const checkExistingUser = async (email: string, role?: string): Promise<void | string> => {
   await connectToDataBase();
-  
+
   const user = await User.findOne({ email }).select("email role");
 
   if (user) {
@@ -65,8 +65,6 @@ const transPorter = nodemailer.createTransport({
 const otpEmitter = new EventEmitter();
 
 otpEmitter.on("otp:generated", async (email: string, OTP: number) => {
-  
-
   const cooldown = await client.get(`cooldown:${email}`);
   if (!cooldown) {
     await transPorter.sendMail(
@@ -142,6 +140,16 @@ export const addBuyerAddress = async (email: string, buyerAddress: Address) => {
   }
 };
 
+export const updateBuyerName = async (email: string, name: string) => {
+  await connectToDataBase();
+
+  try {
+    await User.updateOne({ email }, { $set: { name } });
+  } catch (error: any) {
+    console.log("error");
+    throw new Error(error.message);
+  }
+};
 export const updateBuyerAddress = async (email: string, buyerAddress: Address): Promise<void> => {
   await connectToDataBase();
   try {

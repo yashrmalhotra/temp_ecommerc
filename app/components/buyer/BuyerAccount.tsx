@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { FaCamera, FaEdit, FaUser } from "react-icons/fa";
+import { FaCamera, FaCheck, FaEdit, FaUser } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import "../../CSS/Ecommerce.css";
 import { useUserDetails } from "@/app/context/UserDetailsProvider";
@@ -15,6 +15,8 @@ import Confirm from "./ConfirmDialogue";
 import Header from "./Header";
 import MobileNav from "./MobileNav";
 import Link from "next/link";
+import axios from "axios";
+import ThreeDotLoader from "../ThreeDotLoader";
 
 type EditUserDetailsSchema = z.infer<typeof EditUserNameZodSchema>;
 const BuyerAccount = () => {
@@ -23,6 +25,7 @@ const BuyerAccount = () => {
   const [formVisible, setFormVisible] = useState<boolean>(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
   const [address, setAddress] = useState<Address | undefined>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -34,20 +37,23 @@ const BuyerAccount = () => {
     },
     resolver: zodResolver(EditUserNameZodSchema),
   });
-  const handleEditProfilePicture = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "images/*";
-    input.click();
-  };
-  const submit = (data: any) => {
-    
-    setNameEdit(false);
+
+  const submit = async (data: any) => {
+    try {
+      setIsLoading(true);
+      await axios.put("/api/user/updatename", { email: context?.userDetails?.email, name: data.name });
+      setNameEdit(false);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   const handleEditProfile = (key: string) => {
     setNameEdit(true);
   };
-  const handleUpdate = () => {
+  const handleUpdateName = () => {
     handleSubmit(submit)();
   };
   const handleFormVisible = () => {
@@ -78,6 +84,7 @@ const BuyerAccount = () => {
   return (
     <>
       <Header />
+      {isLoading && <ThreeDotLoader />}
       <section className="mt-14 mb-20">
         <Confirm deleteConfirmOpen={deleteConfirmOpen} setDeleteConfirmOpen={setDeleteConfirmOpen} address={address!} email={context?.userDetails?.email!} />
 
@@ -104,8 +111,8 @@ const BuyerAccount = () => {
           ) : (
             <div className="flex justify-between gap-2 items-center">
               <InputField labelText="Name" placeholder="Name" additionalStyle="w-full" mendatory="*" register={register("name")} error={errors?.name?.message} />
-              <button onClick={handleUpdate} className="text-blue-300 active:text-blue-400 mt-5">
-                <FaEdit size={25} />
+              <button onClick={handleUpdateName} className="text-blue-300 active:text-blue-400 mt-5">
+                <FaCheck size={25} />
               </button>
             </div>
           )}

@@ -14,6 +14,7 @@ Great Mart is a feature-rich, scalable fullstack e-commerce platform built with 
 Use the following test account to explore both **buyer** and **seller** routes:
 
 Email: johndoe@gmail.com
+
 Password: john1234
 
 

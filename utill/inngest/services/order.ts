@@ -88,7 +88,7 @@ export const paymemtConfirmInDB = inngest.createFunction({ id: "payment-confirm"
       item.status = "Ordered";
       item.shipByDate = shipByDate;
       await Product.updateOne({ pid: item.pid }, { $inc: { "performance.sales": item.amount, "performance.unit_sold": item.qty } });
-      await client.publish("order-created", JSON.stringify({ sellerId: item.soldBy, oid: item.oid }));
+      sellerEvent.emit("order-created", { sellerId: item.soldBy, oid: item.oid });
       if (item.paymentSession) {
         delete item.paymentSession;
       }

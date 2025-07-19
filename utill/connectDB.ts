@@ -52,13 +52,4 @@ if (!global.redis) {
   redisClient = global.redis;
 }
 
-let redisSubscribe: Redis;
-if (!global.redisSubscribe) {
-  redisSubscribe = new Redis(redis_url);
-  redisSubscribe.on("connect", () => console.log("redis subscribe connected successfully"));
-} else {
-  redisSubscribe = global.redisSubscribe;
-}
-
 export const client = redisClient;
-export const redisSub = redisSubscribe;

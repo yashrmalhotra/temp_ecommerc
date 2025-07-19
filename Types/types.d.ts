@@ -10,6 +10,8 @@ declare global {
   // eslint-disable-next-line no-var
   var redis: Redis | undefined;
 
+  var redisSubscribe: Redis | undefined;
+
   // eslint-disable-next-line no-var
   var sellerEvent: EventEmitter | undefined;
 }

@@ -5,7 +5,7 @@
 📦 [`yashrmalhotra/greatmart`](https://hub.docker.com/r/yashrmalhotra/greatmart)
 
 
-Great Mart is a feature-rich, scalable fullstack e-commerce platform built with cutting-edge tools like **Next.js App Router**, **MongoDB**, **Redis**, **Docker**, **Cashfree** (for payments), and **Inngest** (for background job queues and events). Inspired by platforms like Amazon and Flipkart, it supports multi-item checkout, real-time notifications, background order processing, and more.
+Great Mart is a feature-rich, scalable fullstack multi-vendor e-commerce platform built with cutting-edge tools like **Next.js App Router**, **MongoDB**, **Redis**, **Docker**, **Cashfree** (for payments), and **Inngest** (for background job queues and events). Inspired by platforms like Amazon and Flipkart, it supports multi-item checkout, real-time notifications, background order processing, and more.
 
 ---
 

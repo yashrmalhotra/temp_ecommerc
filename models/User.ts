@@ -29,7 +29,7 @@ const UserSchema = new Schema<IUSER>(
     },
 
     buyerAddresses: [{ address: String, city: String, state: String, pincode: String, default: Boolean }],
-    sellerShopDisplayName: { type: String, unique: true },
+    sellerShopDisplayName: { type: String, unique: true, sparse: true, },
     sellerAddress: {
       address: String,
       city: String,

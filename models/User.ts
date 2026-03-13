@@ -29,7 +29,13 @@ const UserSchema = new Schema<IUSER>(
     },
 
     buyerAddresses: [{ address: String, city: String, state: String, pincode: String, default: Boolean }],
-    sellerShopDisplayName: { type: String, unique: true, sparse: true, },
+    sellerShopDisplayName: { type: String, 
+                            unique: true, 
+                            sparse: true,
+                            required: function () {
+    return this.role?.includes("seller");
+  },
+                           },
     sellerAddress: {
       address: String,
       city: String,
